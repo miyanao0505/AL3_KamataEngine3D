@@ -3,7 +3,7 @@
 /// <summary>
 /// 2次元ベクトル
 /// </summary>
-typedef struct Vector2 final {
+struct Vector2 {
 	float x;
 	float y;
-} Vec2;
+};
