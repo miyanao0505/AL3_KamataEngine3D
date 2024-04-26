@@ -22,6 +22,9 @@ void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
 
+	// 旋回処理
+	Rotate();
+
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
 
@@ -45,19 +48,21 @@ void Player::Update() {
 	// 座標移動(ベクトルの加算)
 	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, move);
 
+	// 攻撃処理
+	Attack();
+
+	// 弾更新
+	if (bullet_) {
+		bullet_->UpDate();
+	}
+
 	// スケーリング行列の作成
-	worldTransform_.matWorld_ = Matrix::MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	worldTransform_.UpdateMatrix();
 
 	// キャラクターの座標を画面表示する処理
 	ImGui::Begin("Player");
-	// ImGuiで値を入力する変数
-	float inputFloat3[3] = {worldTransform_.translation_.x, worldTransform_.translation_.y, worldTransform_.translation_.z};
 	// float3スライダー
-	ImGui::SliderFloat3("Player", inputFloat3, -15.0f, 15.0f);
-	// ImGuiで入力された値を取得
-	worldTransform_.translation_.x = inputFloat3[0];
-	worldTransform_.translation_.y = inputFloat3[1];
-	worldTransform_.translation_.z = inputFloat3[2];
+	ImGui::SliderFloat3("Player", &worldTransform_.translation_.x, -15.0f, 15.0f);
 	ImGui::End();
 
 	// 移動限界座標
@@ -68,12 +73,40 @@ void Player::Update() {
 	worldTransform_.translation_.x = MyTools::Clamp(worldTransform_.translation_.x, -kMoveLimitX, kMoveLimitX);
 	worldTransform_.translation_.y = MyTools::Clamp(worldTransform_.translation_.y, -kMoveLimitY, kMoveLimitY);
 
-	// 行列更新
-	worldTransform_.matWorld_ = Matrix::MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	// ワールドトランスフォームの更新
+	worldTransform_.UpdateMatrix();
 
+}
+
+void Player::Rotate() {
+	// 回転速さ[ラジアン/frame]
+	const float kRotSpeed = 0.02f;
+
+	// 押した方向で移動ベクトルを変更
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y += kRotSpeed;
+	} else if(input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	}
+}
+
+void Player::Attack() {
+	if (input_->PushKey(DIK_SPACE)) {
+		// 弾を生成し、初期化
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(model_, worldTransform_.translation_);
+
+		// 弾を登録する
+		bullet_ = newBullet;
+	}
 }
 
 void Player::Draw(ViewProjection& viewProjevtion) {
 	// 3Dモデルを描画
 	model_->Draw(worldTransform_, viewProjevtion, textureHandle_);
+
+	// 弾描画
+	if (bullet_) {
+		bullet_->Draw(viewProjevtion);
+	}
 }
