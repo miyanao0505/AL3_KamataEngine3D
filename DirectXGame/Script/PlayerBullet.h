@@ -20,7 +20,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void UpDate();
+	void Update();
 
 	/// <summary>
 	/// 描画

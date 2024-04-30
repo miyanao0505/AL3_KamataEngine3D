@@ -1,5 +1,6 @@
 #pragma once
 #include <Input.h>
+#include <list>
 #include "Model.h"
 #include "WorldTransform.h"
 #include "imgui.h"
@@ -19,6 +20,11 @@ public:
 	/// <param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
 	
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Player();
+
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -51,5 +57,6 @@ private:
 	Input* input_ = nullptr;
 
 	// 弾
+	std::list<PlayerBullet*> bullets_;
 	PlayerBullet* bullet_ = nullptr;
 };

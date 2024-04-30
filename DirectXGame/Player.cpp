@@ -18,6 +18,13 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 	input_ = Input::GetInstance();
 }
 
+Player::~Player() {
+	// bullet_の解放
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Player::Update() {
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
@@ -52,8 +59,8 @@ void Player::Update() {
 	Attack();
 
 	// 弾更新
-	if (bullet_) {
-		bullet_->UpDate();
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
 	}
 
 	// スケーリング行列の作成
@@ -91,13 +98,14 @@ void Player::Rotate() {
 }
 
 void Player::Attack() {
-	if (input_->PushKey(DIK_SPACE)) {
+	// 発射キーをトリガーしたら
+	if (input_->TriggerKey(DIK_SPACE)) {
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_);
 
 		// 弾を登録する
-		bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	}
 }
 
@@ -106,7 +114,7 @@ void Player::Draw(ViewProjection& viewProjevtion) {
 	model_->Draw(worldTransform_, viewProjevtion, textureHandle_);
 
 	// 弾描画
-	if (bullet_) {
-		bullet_->Draw(viewProjevtion);
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Draw(viewProjevtion);
 	}
 }

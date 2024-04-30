@@ -17,7 +17,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	worldTransform_.translation_ = position;
 }
 
-void PlayerBullet::UpDate() {
+void PlayerBullet::Update() {
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
 }
