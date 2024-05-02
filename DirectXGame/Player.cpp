@@ -26,6 +26,15 @@ Player::~Player() {
 }
 
 void Player::Update() {
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](PlayerBullet* bullet) { 
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
 
@@ -66,11 +75,14 @@ void Player::Update() {
 	// スケーリング行列の作成
 	worldTransform_.UpdateMatrix();
 
+#ifdef _DEBUG
 	// キャラクターの座標を画面表示する処理
 	ImGui::Begin("Player");
 	// float3スライダー
 	ImGui::SliderFloat3("Player", &worldTransform_.translation_.x, -15.0f, 15.0f);
+	//
 	ImGui::End();
+#endif // _DEBUG
 
 	// 移動限界座標
 	const float kMoveLimitX = 34.f;
@@ -100,9 +112,17 @@ void Player::Rotate() {
 void Player::Attack() {
 	// 発射キーをトリガーしたら
 	if (input_->TriggerKey(DIK_SPACE)) {
+
+		// 弾の速度
+		const float kBulletSpeed = 1.0f;
+		Vector3 velocity(0, 0, kBulletSpeed);
+
+		// 速度ベクトルを自機の向きに合わせて回転させる
+		velocity = Matrix::TransformNormal(velocity, worldTransform_.matWorld_);
+
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);

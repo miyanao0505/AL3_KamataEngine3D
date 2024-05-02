@@ -2,7 +2,7 @@
 #include <Input.h>
 #include "Model.h"
 #include "WorldTransform.h"
-#include "MyBase.h"
+#include "MyTools.h"
 
 /// <summary>
 /// 自キャラの弾
@@ -15,12 +15,15 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="position">初期座標</param>
-	void Initialize(Model* model, const Vector3& position);
+	/// <param name="velocity">速度</param>
+	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
+
+	bool IsDead() const { return isDead_; }
 
 	/// <summary>
 	/// 描画
@@ -38,4 +41,14 @@ private:
 	// キーボード入力
 	Input* input_ = nullptr;
 
+	// 速度
+	Vector3 velocity_;
+
+	// 寿命<frm>
+	static const int32_t kLifeTime = 60 * 5;
+
+	// デスタイマー
+	int32_t deathTimer_ = kLifeTime;
+	// デスフラグ
+	bool isDead_ = false;
 };
