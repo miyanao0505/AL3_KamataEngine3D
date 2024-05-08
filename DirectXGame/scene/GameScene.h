@@ -7,7 +7,8 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Player.h"
+#include "Script/Player.h"
+#include "Script/Enemy.h"
 #include "DebugCamera.h"
 
 /// <summary>
@@ -59,6 +60,9 @@ private: // メンバ変数
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+	// 敵キャラ
+	Enemy* enemy_ = nullptr;
 
 	// デバッグカメラ
 	bool isDebugCameraActive_ = false;

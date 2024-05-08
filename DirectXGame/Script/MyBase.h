@@ -60,42 +60,74 @@ public:
 	/// 円
 	/// </summary>
 	struct Ball {
-		Vector2 pos;			// 位置
-		Vector2 velocity;		// 速度
-		Vector2 acceleration;	// 加速度
-		float mass;				// 質量
-		float radius;			// 半径
-		unsigned int color;		// 色
+		Vector2 pos;          // 中心点
+		Vector2 velocity;     // 速度
+		Vector2 acceleration; // 加速度
+		float mass;           // 質量
+		float radius;         // 半径
+		unsigned int color;   // 色
 	};
 
 	/// <summary>
 	/// 矩形
 	/// </summary>
 	struct Box {
-		Vector2 pos;			// 位置
-		Vector2 size;			// サイズ
-		Vector2 velocity;		// 速度
-		Vector2 accleration;	// 加速度
-		float mass;				// 質量
-		unsigned int color;		// 色
+		Vector2 pos;         // 位置
+		Vector2 size;        // サイズ
+		Vector2 velocity;    // 速度
+		Vector2 accleration; // 加速度
+		float mass;          // 質量
+		unsigned int color;  // 色
 	};
 
 	/// <summary>
 	/// 矩形の範囲
 	/// </summary>
 	struct Rect {
-		float Top;
-		float Bottom;
-		float Left;
-		float Right;
+		float Top;    // 上辺 Y座標
+		float Bottom; // 下辺 Y座標
+		float Left;   // 左辺 X座標
+		float Right;  // 右辺 X座標
 	};
 
 	/// <summary>
 	/// 線
 	/// </summary>
+	/* struct Line {
+		Vector2 origin; //!< 始点
+		Vector2 diff;   //!< 終点への差分ベクトル
+	};*/
+
+	/// <summary>
+	/// 球
+	/// </summary>
+	struct Sphere {
+		Vector3 center; //!< 中心
+		float radius;   //!< 半径
+	};
+
+	/// <summary>
+	/// 直線
+	/// </summary>
 	struct Line {
-		Vector2 start;
-		Vector2 end;
+		Vector3 origin; //!< 始点
+		Vector3 diff;   //!< 終点への差分ベクトル
+	};
+
+	/// <summary>
+	/// 半直線
+	/// </summary>
+	struct Ray {
+		Vector3 origin; //!< 始点
+		Vector3 diff;   //!< 終点への差分ベクトル
+	};
+
+	/// <summary>
+	/// 線分
+	/// </summary>
+	struct Segment {
+		Vector3 origin; //!< 始点
+		Vector3 diff;   //!< 終点への差分ベクトル
 	};
 };
 
