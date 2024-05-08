@@ -18,16 +18,40 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	worldTransform_.translation_ = position;
 
 	// 引数で受け取った速度をメンバ変数に代入
-	velocity_ = velocity;
+	approachVelocity_ = velocity;
+	leaveVelocity_ = { -0.1f, 0.1f, -0.1f };
 }
 
 void Enemy::Update() {
 
-	// 座標を移動させる(1フレーム分の移動量を足し込む)
-	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, velocity_);
+	switch (phase_) { 
+	case Phase::Approach:
+	default:
+		ApproachUpdate();
+		break;
+	case Phase::Leave:
+		LeaveUpdate();
+		break;
+	}	
 
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
+}
+
+void Enemy::ApproachUpdate()
+{
+	// 移動(ベクトルを加算)
+	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, approachVelocity_);
+	// 規定の位置に到達したら離脱
+	if (worldTransform_.translation_.z < 0.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::LeaveUpdate()
+{
+	// 移動(ベクトルを加算)
+	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, leaveVelocity_);
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {

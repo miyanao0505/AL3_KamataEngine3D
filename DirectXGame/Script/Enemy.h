@@ -4,6 +4,12 @@
 #include "WorldTransform.h"
 #include "MyTools.h"
 
+// 行動フェーズ
+enum class Phase {
+	Approach,	// 接近する
+	Leave,		// 離脱する
+};
+
 /// <summary>
 /// 敵
 /// </summary>
@@ -23,6 +29,16 @@ public:
 	void Update();
 
 	/// <summary>
+	/// 接近フェーズの更新
+	/// </summary>
+	void ApproachUpdate();
+
+	/// <summary>
+	/// 離脱フェーズの更新
+	/// </summary>
+	void LeaveUpdate();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
@@ -39,5 +55,9 @@ private:
 	Input* input_ = nullptr;
 
 	// 速度
-	Vector3 velocity_;
+	Vector3 approachVelocity_;		// 接近フェーズの速度
+	Vector3 leaveVelocity_;			// 離脱フェーズの速度
+
+	// フェーズ
+	Phase phase_ = Phase::Approach;
 };
