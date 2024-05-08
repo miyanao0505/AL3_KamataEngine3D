@@ -39,6 +39,11 @@ public:
 	void LeaveUpdate();
 
 	/// <summary>
+	///	
+	/// </summary>
+	void TestFunc();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
@@ -60,4 +65,7 @@ private:
 
 	// フェーズ
 	Phase phase_ = Phase::Approach;
+
+	// メンバ関数ポインタのテーブル
+	static void (Enemy::*phaseTable_[])();
 };

@@ -2,8 +2,7 @@
 #include <cassert>
 #include "TextureManager.h"
 
-void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity)
-{
+void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	// NULLポインタチェック
 	assert(model);
 
@@ -19,12 +18,19 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 	// 引数で受け取った速度をメンバ変数に代入
 	approachVelocity_ = velocity;
-	leaveVelocity_ = { -0.1f, 0.1f, -0.1f };
+	leaveVelocity_ = {-0.1f, 0.1f, -0.1f};
+
+	phase_ = Phase::Approach;
 }
+
+void (Enemy::*Enemy::phaseTable_[])(){
+    &Enemy::ApproachUpdate, // 要素番号0
+    &Enemy::LeaveUpdate,    // 要素番号1
+};
 
 void Enemy::Update() {
 
-	switch (phase_) { 
+	/*switch (phase_) { 
 	case Phase::Approach:
 	default:
 		ApproachUpdate();
@@ -32,10 +38,15 @@ void Enemy::Update() {
 	case Phase::Leave:
 		LeaveUpdate();
 		break;
-	}	
+	}*/
+
+	// メンバ関数ポインタに入っている関数を呼び出す
+	(this->*phaseTable_[static_cast<size_t>(phase_)])();
 
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
+
+	
 }
 
 void Enemy::ApproachUpdate()
