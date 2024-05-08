@@ -4,10 +4,32 @@
 #include "WorldTransform.h"
 #include "MyTools.h"
 
-// 行動フェーズ
-enum class Phase {
-	Approach,	// 接近する
-	Leave,		// 離脱する
+class Enemy;	// Enemyクラスの前方宣言
+
+// 基底クラス
+class BaseEnemyState
+{
+public:
+	// 純粋仮想関数
+	virtual void Update(Enemy* pEnemy) = 0;
+};
+
+/// <summary>
+/// EnemyStateApproachクラス
+/// </summary>
+class EnmeyStateApproach : public BaseEnemyState
+{
+public:
+	void Update(Enemy* pEnemy);
+};
+
+/// <summary>
+/// EnemyStateLeaveクラス
+/// </summary>
+class EnemyStateLeave : public BaseEnemyState
+{
+public:
+	void Update(Enemy* pEnemy);
 };
 
 /// <summary>
@@ -15,6 +37,10 @@ enum class Phase {
 /// </summary>
 class Enemy : public MyBase {
 public:
+
+	Enemy();		// コンストラクタ
+	~Enemy();		// デストラクタ
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -29,19 +55,33 @@ public:
 	void Update();
 
 	/// <summary>
-	/// 接近フェーズの更新
+	/// stateの変更
 	/// </summary>
-	void ApproachUpdate();
+	/// <param name="newState"></param>
+	void changeState(BaseEnemyState* newState);
 
 	/// <summary>
-	/// 離脱フェーズの更新
+	/// 移動
 	/// </summary>
-	void LeaveUpdate();
+	void PositionUpdate(const Vector3& velocity);
 
 	/// <summary>
-	///	
+	/// 座標の取得
 	/// </summary>
-	void TestFunc();
+	/// <returns></returns>
+	Vector3 GetPosition();
+
+	/// <summary>
+	/// 接近の速度の取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetApproachVelocity();
+
+	/// <summary>
+	/// 離脱の速度の取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetLeaveVelocity();
 
 	/// <summary>
 	/// 描画
@@ -63,9 +103,6 @@ private:
 	Vector3 approachVelocity_;		// 接近フェーズの速度
 	Vector3 leaveVelocity_;			// 離脱フェーズの速度
 
-	// フェーズ
-	Phase phase_ = Phase::Approach;
-
-	// メンバ関数ポインタのテーブル
-	static void (Enemy::*phaseTable_[])();
+	// state
+	BaseEnemyState* state_;
 };

@@ -2,6 +2,17 @@
 #include <cassert>
 #include "TextureManager.h"
 
+/// Enemyクラスの実装
+Enemy::Enemy()
+{
+
+}
+
+Enemy::~Enemy() 
+{ 
+	
+}
+
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	// NULLポインタチェック
 	assert(model);
@@ -20,52 +31,64 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	approachVelocity_ = velocity;
 	leaveVelocity_ = {-0.1f, 0.1f, -0.1f};
 
-	phase_ = Phase::Approach;
+	state_ = new EnmeyStateApproach();
 }
-
-void (Enemy::*Enemy::phaseTable_[])(){
-    &Enemy::ApproachUpdate, // 要素番号0
-    &Enemy::LeaveUpdate,    // 要素番号1
-};
 
 void Enemy::Update() {
 
-	/*switch (phase_) { 
-	case Phase::Approach:
-	default:
-		ApproachUpdate();
-		break;
-	case Phase::Leave:
-		LeaveUpdate();
-		break;
-	}*/
-
 	// メンバ関数ポインタに入っている関数を呼び出す
-	(this->*phaseTable_[static_cast<size_t>(phase_)])();
+	//(this->*phaseTable_[static_cast<size_t>(phase_)])();
+
+	state_->Update(this);
 
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
-
-	
 }
 
-void Enemy::ApproachUpdate()
+void Enemy::changeState(BaseEnemyState* newState)
+{ 
+	state_ = newState;
+}
+
+void Enemy::PositionUpdate(const Vector3& velocity)
+{ 
+	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, velocity);
+}
+
+Vector3 Enemy::GetPosition()
+{ 
+	return worldTransform_.translation_; 
+}
+
+Vector3 Enemy::GetApproachVelocity()
+{ 
+	return approachVelocity_;
+}
+
+Vector3 Enemy::GetLeaveVelocity()
+{ 
+	return leaveVelocity_;
+}
+
+void Enemy::Draw(const ViewProjection& viewProjection) 
 {
-	// 移動(ベクトルを加算)
-	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, approachVelocity_);
-	// 規定の位置に到達したら離脱
-	if (worldTransform_.translation_.z < 0.0f) {
-		phase_ = Phase::Leave;
+	// モデルの描画
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+}
+
+/// EnemyStateApproachクラスの実装
+void EnmeyStateApproach::Update(Enemy* pEnemy) 
+{ 
+	pEnemy->PositionUpdate(pEnemy->GetApproachVelocity());
+
+	if (pEnemy->GetPosition().z < 0.0f)
+	{
+		pEnemy->changeState(new EnemyStateLeave());
 	}
 }
 
-void Enemy::LeaveUpdate()
-{
-	// 移動(ベクトルを加算)
-	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, leaveVelocity_);
-}
-
-void Enemy::Draw(const ViewProjection& viewProjection) {
-	// モデルの描画
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
+/// EnemyStateLeaveクラスの実装
+void EnemyStateLeave::Update(Enemy* pEnemy) 
+{ 
+	pEnemy->PositionUpdate(pEnemy->GetLeaveVelocity());
 }
