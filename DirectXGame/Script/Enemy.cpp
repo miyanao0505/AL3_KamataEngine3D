@@ -24,30 +24,32 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 
+	// 初期座標を保持
+	positinInitialize_ = position;
+
 	// 引数で受け取った初期座標をセット
 	worldTransform_.translation_ = position;
 
 	// 引数で受け取った速度をメンバ変数に代入
 	approachVelocity_ = velocity;
 	leaveVelocity_ = {-0.1f, 0.1f, -0.1f};
-
-	state_ = new EnmeyStateApproach();
+	
+	// 初期状態をセット
+	ChangeState(std::make_unique<EnemyStateApproach>(this));
 }
 
-void Enemy::Update() {
-
-	// メンバ関数ポインタに入っている関数を呼び出す
-	//(this->*phaseTable_[static_cast<size_t>(phase_)])();
-
-	state_->Update(this);
+void Enemy::Update() 
+{
+	state_->Update();
 
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
 }
 
-void Enemy::changeState(BaseEnemyState* newState)
+void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state)
 { 
-	state_ = newState;
+	// 引数で受け取った状態を次の状態としてセットする
+	state_ = std::move(state);
 }
 
 void Enemy::PositionUpdate(const Vector3& velocity)
@@ -77,18 +79,29 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 }
 
 /// EnemyStateApproachクラスの実装
-void EnmeyStateApproach::Update(Enemy* pEnemy) 
-{ 
-	pEnemy->PositionUpdate(pEnemy->GetApproachVelocity());
+EnemyStateApproach::EnemyStateApproach(Enemy* enemy) : BaseEnemyState("State Approach", enemy)
+{
 
-	if (pEnemy->GetPosition().z < 0.0f)
+}
+
+
+void EnemyStateApproach::Update() 
+{ 
+	enemy_->PositionUpdate(enemy_->GetApproachVelocity());
+
+	if (enemy_->GetPosition().z < 0.0f)
 	{
-		pEnemy->changeState(new EnemyStateLeave());
+		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
 	}
 }
 
 /// EnemyStateLeaveクラスの実装
-void EnemyStateLeave::Update(Enemy* pEnemy) 
+EnemyStateLeave::EnemyStateLeave(Enemy* enemy) : BaseEnemyState("State Leave", enemy)
+{
+
+}
+
+void EnemyStateLeave::Update() 
 { 
-	pEnemy->PositionUpdate(pEnemy->GetLeaveVelocity());
+	enemy_->PositionUpdate(enemy_->GetLeaveVelocity());
 }

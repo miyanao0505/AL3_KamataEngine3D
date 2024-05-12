@@ -1,35 +1,50 @@
 #pragma once
 #include <Input.h>
+#include <string>
 #include "Model.h"
 #include "WorldTransform.h"
 #include "MyTools.h"
 
 class Enemy;	// Enemyクラスの前方宣言
 
-// 基底クラス
+// 敵の状態基底
 class BaseEnemyState
 {
 public:
-	// 純粋仮想関数
-	virtual void Update(Enemy* pEnemy) = 0;
+	BaseEnemyState(const std::string& name, Enemy* enemy) : name_(name), enemy_(enemy){};
+
+	// 毎フレーム処理(純粋仮想関数)
+	virtual void Update() = 0;
+
+	protected:
+		// 状態名
+	    std::string name_;
+		// 操作対象の敵
+	    Enemy* enemy_ = nullptr;
 };
 
 /// <summary>
-/// EnemyStateApproachクラス
+/// 接近フェーズ
 /// </summary>
-class EnmeyStateApproach : public BaseEnemyState
+class EnemyStateApproach : public BaseEnemyState
 {
 public:
-	void Update(Enemy* pEnemy);
+	// コンストラクタ
+	EnemyStateApproach(Enemy* enemy);
+	// 更新
+	void Update();
 };
 
 /// <summary>
-/// EnemyStateLeaveクラス
+/// 離脱フェーズ
 /// </summary>
 class EnemyStateLeave : public BaseEnemyState
 {
 public:
-	void Update(Enemy* pEnemy);
+	// コンストラクタ
+	EnemyStateLeave(Enemy* enemy);
+	// 更新
+	void Update();
 };
 
 /// <summary>
@@ -55,10 +70,10 @@ public:
 	void Update();
 
 	/// <summary>
-	/// stateの変更
+	/// 状態変更
 	/// </summary>
 	/// <param name="newState"></param>
-	void changeState(BaseEnemyState* newState);
+	void ChangeState(std::unique_ptr<BaseEnemyState> state);
 
 	/// <summary>
 	/// 移動
@@ -99,10 +114,13 @@ private:
 	// キーボード入力
 	Input* input_ = nullptr;
 
+	// 初期座標
+	Vector3 positinInitialize_;
+
 	// 速度
 	Vector3 approachVelocity_;		// 接近フェーズの速度
 	Vector3 leaveVelocity_;			// 離脱フェーズの速度
 
-	// state
-	BaseEnemyState* state_;
+	// 状態
+	std::unique_ptr<BaseEnemyState> state_;
 };
