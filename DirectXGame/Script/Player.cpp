@@ -129,12 +129,12 @@ void Player::Attack() {
 	}
 }
 
-void Player::Draw(ViewProjection& viewProjevtion) {
+void Player::Draw(ViewProjection& viewProjection) {
 	// 3Dモデルを描画
-	model_->Draw(worldTransform_, viewProjevtion, textureHandle_);
+	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
 	// 弾描画
 	for (PlayerBullet* bullet : bullets_) {
-		bullet->Draw(viewProjevtion);
+		bullet->Draw(viewProjection);
 	}
 }

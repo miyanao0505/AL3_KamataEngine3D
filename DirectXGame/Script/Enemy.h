@@ -4,6 +4,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "MyTools.h"
+#include "EnemyBullet.h"
 
 class Enemy;	// Enemyクラスの前方宣言
 
@@ -53,7 +54,6 @@ public:
 class Enemy : public MyBase {
 public:
 
-	Enemy();		// コンストラクタ
 	~Enemy();		// デストラクタ
 
 	/// <summary>
@@ -76,9 +76,19 @@ public:
 	void ChangeState(std::unique_ptr<BaseEnemyState> state);
 
 	/// <summary>
+	/// 接近フェーズ初期化
+	/// </summary>
+	void ApproachInitialize();
+
+	/// <summary>
 	/// 移動
 	/// </summary>
 	void PositionUpdate(const Vector3& velocity);
+
+	/// <summary>
+	/// 弾発射
+	/// </summary>
+	void Fire();
 
 	/// <summary>
 	/// 座標の取得
@@ -104,6 +114,9 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	// 発射間隔
+	static const int kFireInterval = 60;
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
@@ -123,4 +136,11 @@ private:
 
 	// 状態
 	std::unique_ptr<BaseEnemyState> state_;
+
+	// 弾
+	std::list<EnemyBullet*> bullets_;
+	EnemyBullet* bullet_ = nullptr;
+
+	// 発射タイマー
+	int32_t fireTimer_ = 0;
 };
