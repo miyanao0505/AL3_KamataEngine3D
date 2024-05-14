@@ -5,6 +5,7 @@
 #include "WorldTransform.h"
 #include "MyTools.h"
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 
 class Enemy;	// Enemyクラスの前方宣言
 
@@ -91,6 +92,16 @@ public:
 	void Fire();
 
 	/// <summary>
+	/// 弾を発射し、タイマーをリセットするコールバック関数
+	/// </summary>
+	void FireReset();
+
+	/// <summary>
+	/// 時限発動のイベントのクリア
+	/// </summary>
+	void Clear();
+
+	/// <summary>
 	/// 座標の取得
 	/// </summary>
 	/// <returns></returns>
@@ -141,6 +152,6 @@ private:
 	std::list<EnemyBullet*> bullets_;
 	EnemyBullet* bullet_ = nullptr;
 
-	// 発射タイマー
-	int32_t fireTimer_ = 0;
+	// 時限発動のリスト
+	std::list<TimedCall*> timedCalls_;
 };

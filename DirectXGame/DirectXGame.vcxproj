@@ -119,6 +119,7 @@
     <ClCompile Include="Script\MyTools.cpp" />
     <ClCompile Include="Script\Player.cpp" />
     <ClCompile Include="Script\PlayerBullet.cpp" />
+    <ClCompile Include="Script\TimedCall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\ImGuiManager.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Script\MyTools.h" />
     <ClInclude Include="Script\Player.h" />
     <ClInclude Include="Script\PlayerBullet.h" />
+    <ClInclude Include="Script\TimedCall.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\TerrainPS.hlsl">

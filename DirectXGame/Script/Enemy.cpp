@@ -9,8 +9,14 @@ Enemy::~Enemy()
 	for (EnemyBullet* bullet : bullets_) {
 		delete bullet;
 	}
+
+	// timedCall_の解放
+	for (TimedCall* timedCall : timedCalls_) {
+		delete timedCall;
+	}
 }
 
+/// 初期化
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	// NULLポインタチェック
 	assert(model);
@@ -39,6 +45,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	ApproachInitialize();
 }
 
+/// 更新
 void Enemy::Update() 
 {
 	// デスフラグの立った弾を削除
@@ -52,44 +59,50 @@ void Enemy::Update()
 
 	state_->Update();
 
-	// 発射タイマーカウントダウン
-	fireTimer_--;
-	// 指定時間に達した
-	if (fireTimer_ <= 0.0f) 
-	{
-		// 弾の発射
-		Fire();
-
-		// 発射タイマーを初期化
-		fireTimer_ = kFireInterval;
-	}
+	// 終了したタイマーを削除
+	timedCalls_.remove_if([](TimedCall* timedCall) {
+		if (timedCall->IsFinished()) {
+			delete timedCall;
+			return true;
+		}
+		return false;
+	});
 	
 	// 弾更新
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Update();
 	}
 
+	// 範囲forでリストの全要素について回す
+	for (TimedCall* timedCall : timedCalls_) {
+		timedCall->Update();
+	}
+
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
 }
 
+/// 状態変更
 void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state)
 { 
 	// 引数で受け取った状態を次の状態としてセットする
 	state_ = std::move(state);
 }
 
+/// 接近フェーズ初期化
 void Enemy::ApproachInitialize()
 {
-	// 発射タイマーを初期化
-	fireTimer_ = kFireInterval;
+	// 発射タイマーをセットする
+	timedCalls_.push_back(new TimedCall(std::bind_front(&Enemy::FireReset, this), kFireInterval));
 }
 
+/// 移動
 void Enemy::PositionUpdate(const Vector3& velocity)
 { 
 	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, velocity);
 }
 
+/// 弾発射
 void Enemy::Fire()
 {
 	// 
@@ -109,21 +122,45 @@ void Enemy::Fire()
 	
 }
 
+/// 弾を発射し、タイマーをリセットするコールバック関数
+void Enemy::FireReset()
+{
+	// 弾の発射
+	Fire();
+
+	// 発射タイマーをセットする
+	timedCalls_.push_back(new TimedCall(std::bind_front(&Enemy::FireReset, this), kFireInterval));
+}
+
+/// 時限発動のイベントのクリア
+void Enemy::Clear() 
+{
+	// timedCalls_リストをクリアし、内部のTimedCallオブジェクトを削除
+	for (TimedCall* timedCall : timedCalls_) {
+		delete timedCall;
+	}
+	timedCalls_.clear(); // リストを空にする
+}
+
+/// 座標の取得
 Vector3 Enemy::GetPosition()
 { 
 	return worldTransform_.translation_; 
 }
 
+/// 接近の速度の取得
 Vector3 Enemy::GetApproachVelocity()
 { 
 	return approachVelocity_;
 }
 
+/// 離脱の速度の取得
 Vector3 Enemy::GetLeaveVelocity()
 { 
 	return leaveVelocity_;
 }
 
+/// 描画
 void Enemy::Draw(const ViewProjection& viewProjection) 
 {
 	// モデルの描画
@@ -136,20 +173,23 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 }
 
 /// EnemyStateApproachクラスの実装
-EnemyStateApproach::EnemyStateApproach(Enemy* enemy) : BaseEnemyState("State Approach", enemy)
+EnemyStateApproach::EnemyStateApproach(Enemy* enemy) : BaseEnemyState("State Approach", enemy) 
 {
-
+	// 接近フェーズ初期化
+	enemy->ApproachInitialize();
 }
 
-
+// 更新
 void EnemyStateApproach::Update() 
 { 
 	enemy_->PositionUpdate(enemy_->GetApproachVelocity());
 
-	/*if (enemy_->GetPosition().z < 0.0f)
+	if (enemy_->GetPosition().z < 0.0f)
 	{
+		enemy_->Clear();
+
 		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
-	}*/
+	}
 }
 
 /// EnemyStateLeaveクラスの実装
@@ -158,6 +198,7 @@ EnemyStateLeave::EnemyStateLeave(Enemy* enemy) : BaseEnemyState("State Leave", e
 
 }
 
+// 更新
 void EnemyStateLeave::Update() 
 { 
 	enemy_->PositionUpdate(enemy_->GetLeaveVelocity());
