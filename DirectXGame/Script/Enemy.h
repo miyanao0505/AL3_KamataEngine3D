@@ -7,6 +7,9 @@
 #include "EnemyBullet.h"
 #include "TimedCall.h"
 
+// 自機クラスの前方宣言
+class Player;
+
 class Enemy;	// Enemyクラスの前方宣言
 
 // 敵の状態基底
@@ -120,6 +123,18 @@ public:
 	Vector3 GetLeaveVelocity();
 
 	/// <summary>
+	/// 自キャラをセット
+	/// </summary>
+	/// <param name="player"></param>
+	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetWorldPosition();
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
@@ -154,4 +169,7 @@ private:
 
 	// 時限発動のリスト
 	std::list<TimedCall*> timedCalls_;
+
+	// 自キャラ
+	Player* player_ = nullptr;
 };

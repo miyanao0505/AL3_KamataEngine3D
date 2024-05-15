@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include <cassert>
 #include "TextureManager.h"
+#include "Player.h"
 
 /// Enemyクラスの実装
 Enemy::~Enemy() 
@@ -105,13 +106,16 @@ void Enemy::PositionUpdate(const Vector3& velocity)
 /// 弾発射
 void Enemy::Fire()
 {
-	// 
+	assert(player_);
+
 	// 弾の速度
-	const float kBulletSpeed = -1.0f;
-	Vector3 velocity(0, 0, kBulletSpeed);
-	
-	// 速度ベクトルを敵機の向きに合わせて回転させる
-	velocity = Matrix::TransformNormal(velocity, worldTransform_.matWorld_);
+	const float kBulletSpeed = 1.0f;
+
+	Vector3 playerPos = player_->GetWorldPosition();
+	Vector3 enemyPos = GetWorldPosition();
+	Vector3 differenceVector = MyTools::Subtract(playerPos, enemyPos);
+	differenceVector = MyTools::Normalize(differenceVector);
+	Vector3 velocity = MyTools::Multiply(kBulletSpeed, differenceVector);
 	
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
@@ -119,7 +123,6 @@ void Enemy::Fire()
 	
 	// 弾を登録する
 	bullets_.push_back(newBullet);
-	
 }
 
 /// 弾を発射し、タイマーをリセットするコールバック関数
@@ -158,6 +161,19 @@ Vector3 Enemy::GetApproachVelocity()
 Vector3 Enemy::GetLeaveVelocity()
 { 
 	return leaveVelocity_;
+}
+
+/// ワールド座標を取得
+Vector3 Enemy::GetWorldPosition()
+{
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }
 
 /// 描画
