@@ -17,8 +17,19 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	// 引数で受け取った初期座標をセット
 	worldTransform_.translation_ = position;
 
+	// Z方向に伸びた形状
+	worldTransform_.scale_.x = 0.5f;
+	worldTransform_.scale_.y = 0.5f;
+	worldTransform_.scale_.z = 3.0f;
+
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
+
+	// Y軸周り角度(θy)
+	worldTransform_.rotation_.y = std::atan2(velocity.x, velocity.z);
+	float velocityXZ = MyTools::Length(MyTools::Subtract(velocity, Vector3{0.0f, velocity.y, 0.0f}));
+	// X軸周り角度(θx)
+	worldTransform_.rotation_.x = std::atan2(-velocity.y, velocityXZ);
 }
 
 void EnemyBullet::Update()
