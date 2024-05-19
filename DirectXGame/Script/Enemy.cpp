@@ -94,7 +94,7 @@ void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state)
 void Enemy::ApproachInitialize()
 {
 	// 発射タイマーをセットする
-	timedCalls_.push_back(new TimedCall(std::bind_front(&Enemy::FireReset, this), kFireInterval));
+	timedCalls_.push_back(new TimedCall(std::bind_front(&Enemy::FireReset, this), uint32_t(kFireInterval)));
 }
 
 /// 移動
@@ -120,7 +120,8 @@ void Enemy::Fire()
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-	
+	newBullet->SetPlayer(player_);
+
 	// 弾を登録する
 	bullets_.push_back(newBullet);
 }

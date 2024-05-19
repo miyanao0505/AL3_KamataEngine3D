@@ -27,6 +27,15 @@ public:
 	/// <returns>範囲内の値</returns>
 	static float Clamp(const float& num, const float& min, const float& max);
 
+	/// <summary>
+	/// 線形補間
+	/// </summary>
+	/// <param name="num1">数値1</param>
+	/// <param name="num2">数値2</param>
+	/// <param name="t">媒介変数</param>
+	/// <returns></returns>
+	static float Lerp(const float& num1, const float& num2, const float& t);
+
 	/// 
 	/// ツール関数 ここまで
 	///
@@ -124,6 +133,24 @@ public:
 	/// </summary>
 	/// <param name="v">ベクトル</param>
 	static Vector3 Normalize(const Vector3& v);
+
+	/// <summary>
+	/// 線形補間
+	/// </summary>
+	/// <param name="vector1">ベクトルA</param>
+	/// <param name="vector2">ベクトルB</param>
+	/// <param name="t">媒介変数</param>
+	/// <returns></returns>
+	static Vector3 Lerp(const Vector3& vector1, const Vector3& vector2, float t);
+
+	/// <summary>
+	/// 球面線形補間
+	/// </summary>
+	/// <param name="vector1">ベクトルA</param>
+	/// <param name="vector2">ベクトルB</param>
+	/// <param name="t">媒介変数</param>
+	/// <returns></returns>
+	static Vector3 Slerp(const Vector3& vector1, const Vector3& vector2, float t);
 
 	/// 
 	/// 3次元ベクトル ここまで

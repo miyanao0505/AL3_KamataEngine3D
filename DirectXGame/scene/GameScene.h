@@ -9,6 +9,7 @@
 #include "WorldTransform.h"
 #include "Script/Player.h"
 #include "Script/Enemy.h"
+#include "Script/MyTools.h"
 #include "DebugCamera.h"
 
 /// <summary>

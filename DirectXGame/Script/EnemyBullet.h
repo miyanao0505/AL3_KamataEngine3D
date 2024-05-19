@@ -4,6 +4,9 @@
 #include "WorldTransform.h"
 #include "MyTools.h"
 
+// 自機クラスの前方宣言
+class Player;
+
 /// <summary>
 /// 敵の弾
 /// </summary>
@@ -26,6 +29,14 @@ public:
 	bool IsDead() const { return isDead_; }
 
 	/// <summary>
+	/// ワールド座標を取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetWorldPosition();
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
@@ -41,6 +52,9 @@ private:
 	// キーボード入力
 	Input* input_ = nullptr;
 
+	// 速さ
+	const float speed_ = 0.5f;
+
 	// 速度
 	Vector3 velocity_;
 
@@ -51,4 +65,7 @@ private:
 	int32_t deathTimer_ = kLifeTime;
 	// デスフラグ
 	bool isDead_ = false;
+
+	// 自キャラ
+	Player* player_ = nullptr;
 };
