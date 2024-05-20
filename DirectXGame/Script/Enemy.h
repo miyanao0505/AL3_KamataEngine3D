@@ -6,6 +6,7 @@
 #include "MyTools.h"
 #include "EnemyBullet.h"
 #include "TimedCall.h"
+#include "Collider.h"
 
 // 自機クラスの前方宣言
 class Player;
@@ -55,7 +56,7 @@ public:
 /// <summary>
 /// 敵
 /// </summary>
-class Enemy : public MyBase {
+class Enemy : public Collider {
 public:
 
 	~Enemy();		// デストラクタ
@@ -137,7 +138,7 @@ public:
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
 	/// </summary>
-	void OnCollision();
+	void OnCollision() override;
 
 	/// <summary>
 	/// 弾リストを取得

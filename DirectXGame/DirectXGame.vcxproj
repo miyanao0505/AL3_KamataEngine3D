@@ -112,6 +112,7 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
+    <ClCompile Include="Script\Collider.cpp" />
     <ClCompile Include="Script\Enemy.cpp" />
     <ClCompile Include="Script\EnemyBullet.cpp" />
     <ClCompile Include="Script\Matrix.cpp" />
@@ -151,6 +152,7 @@
     <ClInclude Include="math\Vector3.h" />
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="scene\GameScene.h" />
+    <ClInclude Include="Script\Collider.h" />
     <ClInclude Include="Script\Enemy.h" />
     <ClInclude Include="Script\EnemyBullet.h" />
     <ClInclude Include="Script\Matrix.h" />

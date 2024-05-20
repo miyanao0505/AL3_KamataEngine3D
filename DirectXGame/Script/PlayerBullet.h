@@ -3,11 +3,13 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "MyTools.h"
+#include "Collider.h"
 
 /// <summary>
 /// 自キャラの弾
 /// </summary>
-class PlayerBullet : public MyBase {
+class PlayerBullet : public Collider
+{
 public:
 
 	/// <summary>
@@ -34,7 +36,7 @@ public:
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
 	/// </summary>
-	void OnCollision();
+	void OnCollision() override;
 
 	/// <summary>
 	/// 描画

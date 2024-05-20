@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "MyTools.h"
+#include "Collider.h"
 
 // 自機クラスの前方宣言
 class Player;
@@ -10,7 +11,7 @@ class Player;
 /// <summary>
 /// 敵の弾
 /// </summary>
-class EnemyBullet : public MyBase
+class EnemyBullet : public Collider
 {
 public:
 	/// <summary>
@@ -39,7 +40,7 @@ public:
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
 	/// </summary>
-	void OnCollision();
+	void OnCollision() override;
 
 	/// <summary>
 	/// 描画

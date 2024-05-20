@@ -10,6 +10,7 @@
 #include "Script/Player.h"
 #include "Script/Enemy.h"
 #include "Script/MyTools.h"
+#include "Script/Collider.h"
 #include "DebugCamera.h"
 
 /// <summary>
@@ -73,6 +74,15 @@ private: // メンバ変数
 	// デバッグカメラ
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
+
+	// メンバ関数
+
+	/// <summary>
+	/// コライダー2つの衝突判定と応答
+	/// </summary>
+	/// <param name="colliderA">コライダーA</param>
+	/// <param name="colliderB">コライダーB</param>
+	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 	/// <summary>
 	/// ゲームシーン用

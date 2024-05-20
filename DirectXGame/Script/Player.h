@@ -4,14 +4,15 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "imgui.h"
-#include "Script/MyTools.h"
-#include "Script/Matrix.h"
-#include "Script/PlayerBullet.h"
+#include "MyTools.h"
+#include "Matrix.h"
+#include "PlayerBullet.h"
+#include "Collider.h"
 
 /// <summary>
 /// 自キャラ
 /// </summary>
-class Player {
+class Player : public Collider {
 public:
 	/// <summary>
 	/// 初期化
@@ -44,12 +45,12 @@ public:
 	/// ワールド座標を取得
 	/// </summary>
 	/// <returns></returns>
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
 
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
 	/// </summary>
-	void OnCollision();
+	void OnCollision() override;
 
 	/// <summary>
 	/// 弾リストを取得
