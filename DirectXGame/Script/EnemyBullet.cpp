@@ -23,6 +23,9 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	worldTransform_.scale_.y = 0.5f;
 	worldTransform_.scale_.z = 3.0f;
 
+	// ワールドトランスフォームの更新
+	worldTransform_.UpdateMatrix();
+
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
 
@@ -77,6 +80,12 @@ Vector3 EnemyBullet::GetWorldPosition()
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
+}
+
+// 衝突を検出したら呼び出されるコールバック関数
+void EnemyBullet::OnCollision() 
+{ 
+	isDead_ = true;
 }
 
 void EnemyBullet::Draw(const ViewProjection& viewProjection) 
