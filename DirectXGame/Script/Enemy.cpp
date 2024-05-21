@@ -44,6 +44,11 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 	// 接近フェーズ初期化
 	ApproachInitialize();
+
+	// 衝突属性を設定
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	// 衝突対象を自分の属性以外に設定
+	SetCollisionMask(~kCollisionAttributeEnemy);
 }
 
 /// 更新
