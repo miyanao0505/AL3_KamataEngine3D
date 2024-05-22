@@ -76,5 +76,4 @@ private:
 
 	// 弾
 	std::list<PlayerBullet*> bullets_;
-	PlayerBullet* bullet_ = nullptr;
 };

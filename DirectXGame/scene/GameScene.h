@@ -10,7 +10,7 @@
 #include "Script/Player.h"
 #include "Script/Enemy.h"
 #include "Script/MyTools.h"
-#include "Script/Collider.h"
+#include "Script/CollisionManager.h"
 #include "DebugCamera.h"
 
 /// <summary>
@@ -42,7 +42,12 @@ public: // メンバ関数
 	/// <summary>
 	/// 衝突判定と応答
 	/// </summary>
-	void CheckAllCollisions();
+	//void CheckAllCollisions();
+
+	/// <summary>
+	/// 衝突マネージャに登録
+	/// </summary>
+	void SetCollisionManager();
 
 	/// <summary>
 	/// 描画
@@ -71,18 +76,16 @@ private: // メンバ変数
 	// 敵キャラ
 	Enemy* enemy_ = nullptr;
 
+	// 衝突マネージャ
+	CollisionManager* collisionManager_ = nullptr;
+
 	// デバッグカメラ
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
 
 	// メンバ関数
 
-	/// <summary>
-	/// コライダー2つの衝突判定と応答
-	/// </summary>
-	/// <param name="colliderA">コライダーA</param>
-	/// <param name="colliderB">コライダーB</param>
-	void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
+	
 
 	/// <summary>
 	/// ゲームシーン用

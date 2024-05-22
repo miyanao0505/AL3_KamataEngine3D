@@ -177,7 +177,6 @@ private:
 
 	// 弾
 	std::list<EnemyBullet*> bullets_;
-	EnemyBullet* bullet_ = nullptr;
 
 	// 時限発動のリスト
 	std::list<TimedCall*> timedCalls_;

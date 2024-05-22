@@ -24,7 +24,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 }
 
 Player::~Player() {
-	// bullet_の解放
+	// bullets_の解放
 	for (PlayerBullet* bullet : bullets_) {
 		delete bullet;
 	}
