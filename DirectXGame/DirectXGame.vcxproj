@@ -121,6 +121,7 @@
     <ClCompile Include="Script\MyTools.cpp" />
     <ClCompile Include="Script\Player.cpp" />
     <ClCompile Include="Script\PlayerBullet.cpp" />
+    <ClCompile Include="Script\Skydome.cpp" />
     <ClCompile Include="Script\TimedCall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="Script\MyTools.h" />
     <ClInclude Include="Script\Player.h" />
     <ClInclude Include="Script\PlayerBullet.h" />
+    <ClInclude Include="Script\Skydome.h" />
     <ClInclude Include="Script\TimedCall.h" />
   </ItemGroup>
   <ItemGroup>

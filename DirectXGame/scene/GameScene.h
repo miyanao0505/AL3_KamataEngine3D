@@ -9,6 +9,7 @@
 #include "WorldTransform.h"
 #include "Script/Player.h"
 #include "Script/Enemy.h"
+#include "Script/Skydome.h"
 #include "Script/MyTools.h"
 #include "Script/CollisionManager.h"
 #include "DebugCamera.h"
@@ -40,11 +41,6 @@ public: // メンバ関数
 	void Update();
 
 	/// <summary>
-	/// 衝突判定と応答
-	/// </summary>
-	//void CheckAllCollisions();
-
-	/// <summary>
 	/// 衝突マネージャに登録
 	/// </summary>
 	void SetCollisionManager();
@@ -65,6 +61,9 @@ private: // メンバ変数
 	// 3Dモデルデータ
 	Model* model_ = nullptr;
 
+	// 3Dモデル
+	Model* modelSkydome_ = nullptr;
+
 	// ワールドトランスフォーム
 	WorldTransform worldTransform_;
 	// ビュープロジェクション
@@ -76,16 +75,15 @@ private: // メンバ変数
 	// 敵キャラ
 	Enemy* enemy_ = nullptr;
 
+	// 天球
+	Skydome* skydome_ = nullptr;
+
 	// 衝突マネージャ
 	CollisionManager* collisionManager_ = nullptr;
 
 	// デバッグカメラ
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
-
-	// メンバ関数
-
-	
 
 	/// <summary>
 	/// ゲームシーン用

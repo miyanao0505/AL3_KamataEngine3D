@@ -8,7 +8,10 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() { 
 	delete model_;
+	delete modelSkydome_;
 	delete player_;
+	delete enemy_;
+	delete skydome_;
 	delete debugCamera_;
 	delete collisionManager_;
 }
@@ -24,6 +27,7 @@ void GameScene::Initialize() {
 
 	// 3Dモデルの生成
 	model_ = Model::Create();
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -42,11 +46,19 @@ void GameScene::Initialize() {
 	// 敵に自キャラのアドレスを渡す
 	enemy_->SetPlayer(player_);
 
+	// 天球の生成
+	skydome_ = new Skydome();
+	// 天球の初期化
+	skydome_->Initialize(modelSkydome_, {0.0f, 0.0f, 0.0f});
+
 	// 衝突マネージャの生成
 	collisionManager_ = new CollisionManager();
 
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
+
+	// ビュープロジェクションの初期化
+	//debugCamera_->SetFarZ()
 
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -77,6 +89,9 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 
+	// 天球
+	skydome_->Update();
+
 	// カメラの処理
 	if (isDebugCameraActive_) {
 		// デバッグカメラの更新
@@ -90,51 +105,6 @@ void GameScene::Update() {
 		viewProjection_.UpdateMatrix();
 	}
 }
-
-//void GameScene::CheckAllCollisions()
-//{
-//	// 自弾リストの取得
-//	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
-//	// 敵弾リストの取得
-//	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
-//
-//	// コライダー
-//	std::list<Collider*> colliders_;
-//	// コライダーをリストに登録
-//	colliders_.push_back(player_);
-//	colliders_.push_back(enemy_);
-//	// 自弾全てについて
-//	for (PlayerBullet* playerBullet : playerBullets)
-//	{
-//		colliders_.push_back(playerBullet);
-//	}
-//	// 敵弾全てについて
-//	for (EnemyBullet* enemyBullet : enemyBullets)
-//	{
-//		colliders_.push_back(enemyBullet);
-//	}
-//
-//	// リスト内のペアを総当たり
-//	std::list<Collider*>::iterator itrA = colliders_.begin();
-//	for (; itrA != colliders_.end(); ++itrA)
-//	{
-//		// イテレータAからコライダーAを取得する
-//		Collider* colliderA = *itrA;
-//
-//		// イテレータBはイテレータAの次の要素から回す(重複判定を回避)
-//		std::list<Collider*>::iterator itrB = itrA;
-//		itrB++;
-//
-//		for (; itrB != colliders_.end(); ++itrB)
-//		{
-//			// イテレータBからコライダーBを取得する
-//			Collider* colliderB = *itrB;
-//
-//			// ペアの当たり判定
-//			CheckCollisionPair(colliderA, colliderB);
-//		}
-//	}
-//}
 
 void GameScene::SetCollisionManager() { 
 
@@ -185,6 +155,10 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+	 
+	// 天球の描画
+	skydome_->Draw(viewProjection_);
+
 	// 自キャラの描画
 	player_->Draw(viewProjection_);
 
