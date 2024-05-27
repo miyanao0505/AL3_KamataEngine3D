@@ -39,6 +39,12 @@ public:
 	void OnCollision() override;
 
 	/// <summary>
+	/// 親となるワールドトランスフォームをセット
+	/// </summary>
+	/// <param name="parent">親となるワールドトランスフォーム</param>
+	void SetParent(const WorldTransform* parent);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>

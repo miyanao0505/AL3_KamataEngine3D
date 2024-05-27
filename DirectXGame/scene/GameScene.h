@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Script/RailCamera.h"
 #include "Script/Player.h"
 #include "Script/Enemy.h"
 #include "Script/Skydome.h"
@@ -68,6 +69,9 @@ private: // メンバ変数
 	WorldTransform worldTransform_;
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	// レールカメラ
+	RailCamera* railCamera_ = nullptr;
 
 	// 自キャラ
 	Player* player_ = nullptr;

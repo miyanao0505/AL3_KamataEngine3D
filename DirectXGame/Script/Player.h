@@ -19,7 +19,8 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
+	/// <parma name="position">初期座標</param>
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 position);
 	
 	/// <summary>
 	/// デストラクタ
@@ -57,6 +58,12 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	/// <summary>
+	/// 親となるワールドトランスフォームをセット
+	/// </summary>
+	/// <param name="parent">親となるワールドトランスフォーム</param>
+	void SetParent(const WorldTransform* parent);
 
 	/// <summary>
 	/// 描画

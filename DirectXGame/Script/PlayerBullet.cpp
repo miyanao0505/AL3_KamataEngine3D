@@ -57,6 +57,13 @@ void PlayerBullet::OnCollision()
 	isDead_ = true;
 }
 
+/// 親となるワールドトランスフォームをセット
+void PlayerBullet::SetParent(const WorldTransform* parent)
+{ 
+	// 親子関係を結ぶ
+	worldTransform_.parent_ = parent;
+}
+
 void PlayerBullet::Draw(const ViewProjection& viewProjection) 
 { 
 	// モデルの描画
