@@ -11,6 +11,9 @@
 // 自機クラスの前方宣言
 class Player;
 
+// GameSceneの前方宣言
+class GameScene;
+
 class Enemy;	// Enemyクラスの前方宣言
 
 // 敵の状態基底
@@ -141,10 +144,16 @@ public:
 	void OnCollision() override;
 
 	/// <summary>
-	/// 弾リストを取得
+	/// デスフラグが立っているか
 	/// </summary>
 	/// <returns></returns>
-	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	bool IsDead() const { return isDead_; }
+
+	/// <summary>
+	/// ゲームシーンをセット
+	/// </summary>
+	/// <param name="gameScene">ゲームシーン</param>
+	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 	/// <summary>
 	/// 描画
@@ -175,8 +184,11 @@ private:
 	// 状態
 	std::unique_ptr<BaseEnemyState> state_;
 
-	// 弾
-	std::list<EnemyBullet*> bullets_;
+	// ゲームシーン
+	GameScene* gameScene_ = nullptr;
+
+	// デスフラグ
+	bool isDead_ = false;
 
 	// 時限発動のリスト
 	std::list<TimedCall*> timedCalls_;

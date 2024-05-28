@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -47,6 +48,28 @@ public: // メンバ関数
 	void SetCollisionManager();
 
 	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生
+	/// </summary>
+	/// <param name="pos">初期位置</param>
+	void EnemyBorn(Vector3 pos);
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+
+	/// <summary>
+	/// 敵弾を追加する
+	/// </summary>
+	/// <param name="enemyBullet">敵弾</param>
+	void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw();
@@ -77,7 +100,14 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 
 	// 敵キャラ
-	Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemys_;
+	// 敵発生コマンド
+	std::stringstream enemyPopCommands;
+	bool isWait = false;					// 待機中フラグ
+	int32_t waitTimer = 0;					// 待機タイマー
+
+	// 敵弾
+	std::list<EnemyBullet*> enemyBullets_;
 
 	// 天球
 	Skydome* skydome_ = nullptr;

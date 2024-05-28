@@ -2,15 +2,11 @@
 #include <cassert>
 #include "TextureManager.h"
 #include "Player.h"
+#include "GameScene.h"
 
 /// Enemyクラスの実装
 Enemy::~Enemy() 
 { 
-	// bullet_の解放
-	for (EnemyBullet* bullet : bullets_) {
-		delete bullet;
-	}
-
 	// timedCall_の解放
 	for (TimedCall* timedCall : timedCalls_) {
 		delete timedCall;
@@ -54,15 +50,6 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 /// 更新
 void Enemy::Update() 
 {
-	// デスフラグの立った弾を削除
-	bullets_.remove_if([](EnemyBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
-			return true;
-		}
-		return false;
-	});
-
 	state_->Update();
 
 	// 終了したタイマーを削除
@@ -73,11 +60,6 @@ void Enemy::Update()
 		}
 		return false;
 	});
-	
-	// 弾更新
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Update();
-	}
 
 	// 範囲forでリストの全要素について回す
 	for (TimedCall* timedCall : timedCalls_) {
@@ -127,8 +109,7 @@ void Enemy::Fire()
 	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 	newBullet->SetPlayer(player_);
 
-	// 弾を登録する
-	bullets_.push_back(newBullet);
+	gameScene_->AddEnemyBullet(newBullet);
 }
 
 /// 弾を発射し、タイマーをリセットするコールバック関数
@@ -184,8 +165,9 @@ Vector3 Enemy::GetWorldPosition()
 
 // 衝突を検出したら呼び出されるコールバック関数
 void Enemy::OnCollision()
-{
-
+{ 
+	// デスフラグを立てる
+	isDead_ = true;
 }
 
 /// 描画
@@ -193,11 +175,6 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 {
 	// モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-
-	// 弾描画
-	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(viewProjection);
-	}
 }
 
 /// EnemyStateApproachクラスの実装
