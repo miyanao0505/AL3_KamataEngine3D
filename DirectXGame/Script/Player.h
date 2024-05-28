@@ -35,7 +35,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	/// /// <param name="viewProjection">ビュープロジェクション</param>
+	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Update(ViewProjection& viewProjection);
 	
 	/// <summary>
@@ -58,6 +58,12 @@ public:
 	/// 3Dレティクルのワールド座標を取得
 	/// </summary>
 	Vector3 Get3DReticleWorldPosition();
+
+	/// <summary>
+	/// マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
+	/// </summary>
+	/// <param name="viewProjection">ビュープロジェクション</param>
+	void Set3DReticleFromMouseCursor(ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
@@ -97,6 +103,9 @@ private:
 	uint32_t textureHandle_ = 0u;
 	// キーボード入力
 	Input* input_ = nullptr;
+
+	// 自キャラの速さ
+	const float kCharacterSpeed = 0.2f;
 
 	// 弾
 	std::list<PlayerBullet*> bullets_;

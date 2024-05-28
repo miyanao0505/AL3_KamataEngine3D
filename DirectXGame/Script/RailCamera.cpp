@@ -17,9 +17,9 @@ void RailCamera::Initialize(const Vector3& position, const Vector3& rotate)
 void RailCamera::Update()
 {
 	// ワールドトランスフォームの座標の数値を加算したりする(移動)
-	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, {0.0f, 0.0f, -0.05f});
+	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, {0.0f, 0.0f, 0.0f});
 	// ワールドトランスフォームの角度の数値を加算したりする(回転)
-	worldTransform_.rotation_ = MyTools::Add(worldTransform_.rotation_, {0.0f, 0.0f, 0.0f});
+	worldTransform_.rotation_ = MyTools::Add(worldTransform_.rotation_, {0.0f, float(M_PI) / 1200.f, 0.0f});
 	// ワールドトランスフォームのワールド行列再計算
 	worldTransform_.UpdateMatrix();
 
