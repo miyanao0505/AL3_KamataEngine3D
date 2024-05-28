@@ -2,7 +2,11 @@
 #include <Input.h>
 #include <list>
 #include "Model.h"
+#include "Sprite.h"
+#include "TextureManager.h"
 #include "WorldTransform.h"
+#include "ViewProjection.h"
+#include "WinApp.h"
 #include "imgui.h"
 #include "MyTools.h"
 #include "Matrix.h"
@@ -19,8 +23,9 @@ public:
 	/// </summary>
 	/// <param name="model">モデル</param>
 	/// <param name="textureHandle">テクスチャハンドル</param>
-	/// <parma name="position">初期座標</param>
-	void Initialize(Model* model, uint32_t textureHandle, Vector3 position);
+	/// <param name="position">初期座標</param>
+	/// <param name="reticleTextureHandle">レティクルのテクスチャハンドル</param>
+	void Initialize(Model* model, uint32_t textureHandle, Vector3 position, uint32_t reticleTextureHandle);
 	
 	/// <summary>
 	/// デストラクタ
@@ -30,7 +35,8 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	/// /// <param name="viewProjection">ビュープロジェクション</param>
+	void Update(ViewProjection& viewProjection);
 	
 	/// <summary>
 	/// 旋回
@@ -47,6 +53,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	Vector3 GetWorldPosition() override;
+
+	/// <summary>
+	/// 3Dレティクルのワールド座標を取得
+	/// </summary>
+	Vector3 Get3DReticleWorldPosition();
 
 	/// <summary>
 	/// 衝突を検出したら呼び出されるコールバック関数
@@ -71,11 +82,17 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(ViewProjection& viewProjection);
 
+	/// <summary>
+	/// UI描画
+	/// </summary>
+	void DrawUI();
+
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
-	Model* model_ = nullptr;
+	Model* modelPlayer_ = nullptr;	// 自キャラ
+	Model* modelBullet_ = nullptr;	// 弾
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	// キーボード入力
@@ -83,4 +100,10 @@ private:
 
 	// 弾
 	std::list<PlayerBullet*> bullets_;
+
+	// 3Dレティクル用ワールドトランスフォーム
+	WorldTransform worldTransform3DReticle_;
+
+	// 2Dレティクル用スプライト
+	Sprite* sprite2DReticle_ = nullptr;
 };

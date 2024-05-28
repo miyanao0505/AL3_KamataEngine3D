@@ -288,6 +288,14 @@ public:
 	static Matrix4x4 Multiply(const float& scalar, const Matrix4x4& matrix);
 
 	/// <summary>
+	/// 3次元ベクトルと4x4行列の積を返す関数
+	/// </summary>
+	/// <param name="vector">ベクトル</param>
+	/// <param name="matrix">行列</param>
+	/// <returns></returns>
+	static Vector3 Multiply(const Vector3& vector, const Matrix4x4& matrix);
+
+	/// <summary>
 	/// 3次元ベクトルを同時座標として変換する
 	/// </summary>
 	/// <param name="vector">ベクトル</param>

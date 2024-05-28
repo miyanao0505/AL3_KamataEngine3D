@@ -45,12 +45,15 @@ void GameScene::Initialize() {
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 
+	// 2Dレティクル用テクスチャ取得
+	uint32_t textureReticle = TextureManager::Load("2DReticle.png");
+
 	// 自キャラの生成
 	player_ = new Player();
 	// 自機の位置調整
 	Vector3 playerPosition(0, 0, 50);
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_, playerPosition);
+	player_->Initialize(model_, textureHandle_, playerPosition, textureReticle);
 
 	/// 敵発生データの読み込み
 	LoadEnemyPopData();
@@ -110,7 +113,7 @@ void GameScene::Update() {
 	UpdateEnemyPopCommands();
 
 	// 自キャラの更新
-	player_->Update();
+	player_->Update(viewProjection_);
 
 	// 敵キャラの更新
 	for (Enemy* enemy : enemys_) {
@@ -334,6 +337,9 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
+	// 自キャラの2D描画
+	player_->DrawUI();
+	
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
