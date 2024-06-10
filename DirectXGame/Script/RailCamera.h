@@ -1,6 +1,7 @@
 #pragma once
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "PrimitiveDrawer.h"
 #include "MyTools.h"
 #include "Matrix.h"
 
@@ -34,6 +35,11 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	/// <summary>
+	/// Catmull-RomSplineの描画
+	/// </summary>
+	void DrawCatmullRom();
 
 private:
 	// ワールド変換データ

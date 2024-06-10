@@ -1,6 +1,9 @@
-#pragma once
+﻿#pragma once
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <vector>
+#include <assert.h>
+#include <algorithm>
 #include "MyBase.h"
 
 class MyTools :
@@ -17,6 +20,16 @@ public:
 	/// 
 	/// ツール関数 ここから
 	/// 
+
+	/// <summary>
+	/// マウスカーソルの座標を取得する関数
+	/// </summary>
+	/// <param name="kWindowWidth">ウィンドウの横幅</param>
+	/// <param name="kWindowHeight">ウィンドウの縦幅</param>
+	/// <param name="viewMatrix">ビュー行列</param>
+	/// <param name="projectionMatrix">プロジェクション行列</param>
+	/// <returns></returns>
+	static Vector3 GetMousePosition(const float& kWindowWidth, const float& kWindowHeight, const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix);
 	
 	/// <summary>
 	/// 範囲内の値を返す関数
@@ -35,6 +48,117 @@ public:
 	/// <param name="t">媒介変数</param>
 	/// <returns></returns>
 	static float Lerp(const float& num1, const float& num2, const float& t);
+
+	/// <summary>
+	/// 三角形の存在する平面情報を求める関数
+	/// </summary>
+	/// <param name="triangle"></param>
+	/// <returns></returns>
+	static Plane TriangleToPlane(const Triangle& triangle);
+
+	/// <summary>
+	/// 球と球の衝突判定を返す関数
+	/// </summary>
+	/// <param name="sphere1">球A</param>
+	/// <param name="sphere2">球B</param>
+	/// <returns></returns>
+	static bool IsCollision(const Sphere& sphere1, const Sphere& sphere2);
+
+	/// <summary>
+	/// 球と平面の衝突判定を返す関数
+	/// </summary>
+	/// <param name="sphere">球</param>
+	/// <param name="plane">平面</param>
+	/// <returns></returns>
+	static bool IsCollision(const Sphere& sphere, const Plane& plane);
+
+	/// <summary>
+	/// 直線と平面の衝突判定を返す関数
+	/// </summary>
+	/// <param name="line">直線</param>
+	/// <param name="plane">平面</param>
+	/// <returns></returns>
+	static bool IsCollision(const Line& line, const Plane& plane);
+
+	/// <summary>
+	/// 半直線と平面の衝突判定を返す関数
+	/// </summary>
+	/// <param name="ray">半直線</param>
+	/// <param name="plane">平面</param>
+	/// <returns></returns>
+	static bool IsCollision(const Ray& ray, const Plane& plane);
+
+	/// <summary>
+	/// 線分と平面の衝突判定を返す関数
+	/// </summary>
+	/// <param name="segment">線分</param>
+	/// <param name="plane">平面</param>
+	/// <returns></returns>
+	static bool IsCollision(const Segment& segment, const Plane& plane);
+
+	/// <summary>
+	/// 三角形と直線の衝突判定を返す関数
+	/// </summary>
+	/// <param name="triangle">三角形</param>
+	/// <param name="line">直線</param>
+	/// <returns></returns>
+	static bool IsCollision(const Triangle& triangle, const Line& line);
+
+	/// <summary>
+	/// 三角形と半直線の衝突判定を返す関数
+	/// </summary>
+	/// <param name="triangle">三角形</param>
+	/// <param name="ray">半直線</param>
+	/// <returns></returns>
+	static bool IsCollision(const Triangle& triangle, const Ray& ray);
+
+	/// <summary>
+	/// 三角形と線分の衝突判定を返す関数
+	/// </summary>
+	/// <param name="triangle">三角形</param>
+	/// <param name="segment">線分</param>
+	/// <returns></returns>
+	static bool IsCollision(const Triangle& triangle, const Segment& segment);
+
+	/// <summary>
+	/// AABB同士の衝突判定を返す関数
+	/// </summary>
+	/// <param name="aabb1">aabbA</param>
+	/// <param name="aabb2">aabbB</param>
+	/// <returns></returns>
+	static bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+
+	/// <summary>
+	/// AABBと球の衝突判定を返す関数
+	/// </summary>
+	/// <param name="aabb">aabb</param>
+	/// <param name="sphere">球</param>
+	/// <returns></returns>
+	static bool IsCollision(const AABB& aabb, const Sphere& sphere);
+
+	/// <summary>
+	/// AABBと直線の衝突判定を返す関数
+	/// </summary>
+	/// <param name="aabb">aabb</param>
+	/// <param name="line">直線</param>
+	/// <returns></returns>
+	static bool IsCollision(const AABB& aabb, const Line& line);
+
+	/// <summary>
+	/// AABBと半直線の衝突判定を返す関数
+	/// </summary>
+	/// <param name="aabb">aabb</param>
+	/// <param name="ray">半直線</param>
+	/// <returns></returns>
+	static bool IsCollision(const AABB& aabb, const Ray& ray);
+
+	/// <summary>
+	/// AABBと線分の衝突判定を返す関数
+	/// </summary>
+	/// <param name="aabb">aabb</param>
+	/// <param name="segment">線分</param>
+	/// <returns></returns>
+	static bool IsCollision(const AABB& aabb, const Segment& segment);
 
 	/// 
 	/// ツール関数 ここまで
@@ -151,6 +275,47 @@ public:
 	/// <param name="t">媒介変数</param>
 	/// <returns></returns>
 	static Vector3 Slerp(const Vector3& vector1, const Vector3& vector2, float t);
+
+	/// <summary>
+	/// CatmullRom補間
+	/// </summary>
+	/// <param name="p0">点0の座標</param>
+	/// <param name="p1">点1の座標</param>
+	/// <param name="p2">点2の座標</param>
+	/// <param name="p3">点3の座標</param>
+	/// <param name="t">点1を0.0f、点2を1.0fとした割合指定</param>
+	/// <returns>点1と点2の間で指定された座標</returns>
+	static Vector3 CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Vector3& p3, float t);
+
+	/// <summary>
+	/// CatmullRomスプライン曲線上の座標を得る
+	/// </summary>
+	/// <param name="points">制御点の集合</param>
+	/// <param name="t">スプラインの全区間の中での割合指定[0, 1]</param>
+	/// <returns>座標</returns>
+	static Vector3 CatmullRomPosition(const std::vector<Vector3>& points, float t);
+
+	/// <summary>
+	/// 正射影ベクトル(ベクトル射影)を返す関数
+	/// </summary>
+	/// <param name="v1">ベクトルA</param>
+	/// <param name="v2">ベクトルB</param>
+	static Vector3 Project(const Vector3& v1, const Vector3& v2);
+
+	/// <summary>
+	/// 最近接点を返す関数
+	/// </summary>
+	/// <param name="point">始点</param>
+	/// <param name="segment">線分</param>
+	/// <returns></returns>
+	static Vector3 ClosestPoint(const Vector3& point, const Segment& segment);
+
+	/// <summary>
+	/// 垂直なベクトルを求める関数
+	/// </summary>
+	/// <param name="vector"></param>
+	/// <returns></returns>
+	static Vector3 Perpendicular(const Vector3& vector);
 
 	/// 
 	/// 3次元ベクトル ここまで

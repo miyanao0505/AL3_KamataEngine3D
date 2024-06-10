@@ -81,6 +81,29 @@ void GameScene::Initialize() {
 	debugCamera_->SetFarZ(1000);
 	viewProjection_.Initialize();
 
+	primitiveDrawer_ = PrimitiveDrawer::GetInstance();
+	primitiveDrawer_->Initialize();
+	primitiveDrawer_->SetViewProjection(&viewProjection_);
+
+	// スプライン曲線制御点(通過点)
+	controlPoints_ = {
+	    {0.f,  0.f,  0.f},
+        {10.f, 10.f, 0.f},
+        {10.f, 15.f, 0.f},
+        {20.f, 15.f, 0.f},
+        {20.f, 0.f,  0.f},
+        {30.f, 0.f,  0.f},
+	};
+	// 線分の数
+	const size_t segmentCount = 100;
+	// 線分の数+1個分の頂点座標を計算
+	for (size_t i = 0; i < segmentCount + 1; i++) {
+		float t = 1.0f / segmentCount * i;
+		Vector3 pos = MyTools::CatmullRomPosition(controlPoints_, t);
+		// 描画用頂点リストに追加
+		pointsDrawing.push_back(pos);
+	}
+
 	// 軸方向表示の表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
@@ -339,6 +362,11 @@ void GameScene::Draw() {
 
 	// 自キャラの2D描画
 	player_->DrawUI();
+
+	// 先頭から2点ずつ取り出してライン描画
+	for (size_t i = 0; i < pointsDrawing.size() - 1; i++) {
+		primitiveDrawer_->DrawLine3d(pointsDrawing.at(i), pointsDrawing.at(i + 1), Vector4(255, 0, 0, 255));
+	}
 	
 	// スプライト描画後処理
 	Sprite::PostDraw();

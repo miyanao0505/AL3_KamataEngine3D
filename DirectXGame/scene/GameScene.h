@@ -69,6 +69,8 @@ public: // メンバ関数
 	/// <param name="enemyBullet">敵弾</param>
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
+	ViewProjection* GetVeiwProjection() { return &viewProjection_; }
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -118,6 +120,13 @@ private: // メンバ変数
 	// デバッグカメラ
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
+
+	// スプライン曲線制御点(通過点)
+	std::vector<Vector3> controlPoints_;
+	// 線分で描画する用の頂点リスト
+	std::vector<Vector3> pointsDrawing;
+
+	PrimitiveDrawer* primitiveDrawer_ = nullptr;
 
 	/// <summary>
 	/// ゲームシーン用
