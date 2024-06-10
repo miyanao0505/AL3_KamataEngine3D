@@ -532,7 +532,7 @@ Vector3 MyTools::CatmullRomInterpolation(const Vector3& p0, const Vector3& p1, c
 	
 	Vector3 e2 = Multiply(2.0f, p0);
 	e2 = Subtract(e2, Multiply(5.0f, p1));
-	e2 = Add(e2, Multiply(1.0f, p2));
+	e2 = Add(e2, Multiply(4.0f, p2));
 	e2 = Subtract(e2, p3);
 	/*Add(Subtract(Multiply(2.f, p0), Multiply(5.f, p1)), Subtract(Multiply(4.f, p2), p3));*/
 	
