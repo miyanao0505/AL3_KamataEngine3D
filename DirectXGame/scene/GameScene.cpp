@@ -34,10 +34,11 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	// ファイル名を指定してテクスチャを読み込む
-	textureHandle_ = TextureManager::Load("player.png");
+	textureHandle_ = TextureManager::Load("player/player.png");
 
 	// 3Dモデルの生成
 	model_ = Model::Create();
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	// ワールドトランスフォームの初期化
@@ -53,7 +54,7 @@ void GameScene::Initialize() {
 	// 自機の位置調整
 	Vector3 playerPosition(0, 0, 50);
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_, playerPosition, textureReticle);
+	player_->Initialize(modelPlayer_, textureHandle_, playerPosition, textureReticle);
 
 	/// 敵発生データの読み込み
 	LoadEnemyPopData();
@@ -93,9 +94,14 @@ void GameScene::Initialize() {
         {20.f, 15.f, 0.f},
         {20.f, 0.f,  0.f},
         {30.f, 0.f,  0.f},
+		{40.f, 0.f,  5.f},
+        {50.f, 0.f,  10.f},
+        {60.f, 0.f,  20.f},
+        {70.f, 0.f,  10.f },
+        {70.f, 0.f,  0.f },
 	};
 	// 線分の数
-	const size_t segmentCount = 100;
+	const size_t segmentCount = 500;
 	// 線分の数+1個分の頂点座標を計算
 	for (size_t i = 0; i < segmentCount + 1; i++) {
 		float t = 1.0f / segmentCount * i;
@@ -108,6 +114,9 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetVisible(true);
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	t = 0;
+	forwardt = t + 50;
 }
 
 void GameScene::Update() {
@@ -165,7 +174,7 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	// レールカメラの更新
-	railCamera_->Update();
+	railCamera_->Update(pointsDrawing.at(t), MyTools::Subtract(pointsDrawing.at(forwardt), pointsDrawing.at(t)));
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 	// ビュープロジェクション行列の転送
@@ -178,6 +187,14 @@ void GameScene::Update() {
 	} else {
 		// ビュープロジェクション行列の更新と転送
 		//viewProjection_.UpdateMatrix();
+	}
+
+	t++;
+	forwardt++;
+	if (t + 50 > 500)
+	{
+		t = 450;
+		forwardt = 500;
 	}
 }
 

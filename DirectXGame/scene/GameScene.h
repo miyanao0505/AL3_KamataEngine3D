@@ -87,6 +87,9 @@ private: // メンバ変数
 	// 3Dモデルデータ
 	Model* model_ = nullptr;
 
+	// 3Dモデルデータ
+	Model* modelPlayer_ = nullptr;
+
 	// 3Dモデル
 	Model* modelSkydome_ = nullptr;
 
@@ -127,6 +130,9 @@ private: // メンバ変数
 	std::vector<Vector3> pointsDrawing;
 
 	PrimitiveDrawer* primitiveDrawer_ = nullptr;
+
+	int t;
+	int forwardt;
 
 	/// <summary>
 	/// ゲームシーン用

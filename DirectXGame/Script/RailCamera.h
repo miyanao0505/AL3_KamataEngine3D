@@ -16,13 +16,14 @@ public:
 	/// </summary>
 	/// <param name="position">ワールド座標</param>
 	/// <param name="rotate">回転角(ラジアン)</param>
-	/// <param name="velocity">速度</param>
 	void Initialize(const Vector3& position, const Vector3& rotate);
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	/// <param name="eye">カメラオブジェクトのワールド座標</param>
+	/// <param name="target">カメラオブジェクトの前方ベクトル</param>
+	void Update(const Vector3& eye, const Vector3& target);
 
 	/// <summary>
 	/// ビュープロジェクションを取得

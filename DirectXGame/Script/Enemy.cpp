@@ -18,9 +18,10 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	// NULLポインタチェック
 	assert(model);
 
-	model_ = model;
+	model_ = Model::CreateFromOBJ("enemy", true);
+	modelBullet_ = model;
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("enemy.png");
+	textureHandle_ = TextureManager::Load("enemy/enemy.png");
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -106,7 +107,7 @@ void Enemy::Fire()
 	
 	// 弾を生成し、初期化
 	EnemyBullet* newBullet = new EnemyBullet();
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	newBullet->Initialize(modelBullet_, worldTransform_.translation_, velocity);
 	newBullet->SetPlayer(player_);
 
 	gameScene_->AddEnemyBullet(newBullet);
