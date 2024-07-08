@@ -37,7 +37,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("player/player.png");
 
 	// 3Dモデルの生成
-	model_ = Model::Create();
+	model_ = Model::CreateFromOBJ("cube", true);
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -86,26 +86,18 @@ void GameScene::Initialize() {
 	primitiveDrawer_->Initialize();
 	primitiveDrawer_->SetViewProjection(&viewProjection_);
 
-	// スプライン曲線制御点(通過点)
+	// レールカメラの軌跡
 	controlPoints_ = {
-	    {0.f,  0.f,  0.f},
-        {10.f, 10.f, 0.f},
-        {10.f, 15.f, 0.f},
-        {20.f, 15.f, 0.f},
-        {20.f, 0.f,  0.f},
-        {30.f, 0.f,  0.f},
-		{40.f, 0.f,  5.f},
-        {50.f, 0.f,  10.f},
-        {60.f, 0.f,  20.f},
-        {70.f, 0.f,  10.f },
-        {70.f, 0.f,  0.f },
+		{0.f, 0.f, -200.f},
+		{0.f, 0.f, 0.f },
 	};
 	// 線分の数
 	const size_t segmentCount = 500;
 	// 線分の数+1個分の頂点座標を計算
 	for (size_t i = 0; i < segmentCount + 1; i++) {
 		float t = 1.0f / segmentCount * i;
-		Vector3 pos = MyTools::CatmullRomPosition(controlPoints_, t);
+		//Vector3 pos = MyTools::CatmullRomPosition(controlPoints_, t);
+		Vector3 pos = MyTools::Add(MyTools::Multiply(1.f - t, controlPoints_.at(0)), MyTools::Multiply(t, controlPoints_.at(1)));
 		// 描画用頂点リストに追加
 		pointsDrawing.push_back(pos);
 	}
@@ -379,11 +371,6 @@ void GameScene::Draw() {
 
 	// 自キャラの2D描画
 	player_->DrawUI();
-
-	// 先頭から2点ずつ取り出してライン描画
-	for (size_t i = 0; i < pointsDrawing.size() - 1; i++) {
-		primitiveDrawer_->DrawLine3d(pointsDrawing.at(i), pointsDrawing.at(i + 1), Vector4(255, 0, 0, 255));
-	}
 	
 	// スプライト描画後処理
 	Sprite::PostDraw();

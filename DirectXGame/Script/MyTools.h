@@ -1,10 +1,9 @@
-﻿#pragma once
+#pragma once
+#include "MyBase.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <vector>
 #include <assert.h>
-#include <algorithm>
-#include "MyBase.h"
+#include <vector>
 
 class MyTools :
 	public MyBase

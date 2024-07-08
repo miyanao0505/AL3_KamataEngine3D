@@ -157,6 +157,7 @@
     <ClInclude Include="math\Vector4.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="Script\Collider.h" />
+    <ClInclude Include="Script\CollisionConfig.h" />
     <ClInclude Include="Script\CollisionManager.h" />
     <ClInclude Include="Script\Draw.h" />
     <ClInclude Include="Script\Enemy.h" />

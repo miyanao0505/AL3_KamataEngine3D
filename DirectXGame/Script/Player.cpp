@@ -9,7 +9,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 position, 
 
 	// 3Dモデルの生成
 	modelPlayer_ = model;
-	modelBullet_ = model;
+	modelBullet_ = Model::CreateFromOBJ("cube", true);
 	
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = textureHandle;
@@ -197,7 +197,7 @@ void Player::Attack() {
 
 		// 弾を生成し、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity);
+		newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity, 0);
 
 		// 弾を登録する
 		bullets_.push_back(newBullet);
@@ -312,6 +312,9 @@ void Player::Set3DReticleFromMouseCursor(ViewProjection& viewProjection) {
 	worldTransform3DReticle_.UpdateMatrix();
 
 #ifdef _DEBUG
+	ImGui::SetNextWindowPos(ImVec2(750, 50), ImGuiCond_Once);   // ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(450, 400), ImGuiCond_Once); // ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
 	ImGui::Begin("Player");
 	ImGui::Text("world %.2f, %.2f, %.2f", GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z);
 	ImGui::End();
@@ -337,7 +340,7 @@ void Player::Draw(ViewProjection& viewProjection) {
 	modelPlayer_->Draw(worldTransform_, viewProjection, textureHandle_);
 
 	// 3Dレティクルを描画
-	modelBullet_->Draw(worldTransform3DReticle_, viewProjection);
+	//modelBullet_->Draw(worldTransform3DReticle_, viewProjection);
 
 	// 弾描画
 	for (PlayerBullet* bullet : bullets_) {

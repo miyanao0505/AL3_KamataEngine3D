@@ -36,6 +36,9 @@ void RailCamera::Update(const Vector3& eye, const Vector3& target)
 
 #ifdef _DEBUG
 	// カメラ座標を画面表示する処理
+	ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Once);   // ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(350, 80), ImGuiCond_Once); // ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
 	ImGui::Begin("Camera");
 	ImGui::SliderFloat3("translation", &worldTransform_.translation_.x, -100.0f, 100.0f);
 	ImGui::SliderFloat3("rotation", &worldTransform_.rotation_.x, -float(M_PI), float(M_PI));

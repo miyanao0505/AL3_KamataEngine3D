@@ -1,5 +1,6 @@
 #include "MyTools.h"
 #include "Matrix.h"
+#include <algorithm>
 #include <iostream>
 
 using namespace std;

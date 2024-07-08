@@ -37,11 +37,6 @@ public:
 	/// <returns></returns>
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 
-	/// <summary>
-	/// Catmull-RomSplineの描画
-	/// </summary>
-	void DrawCatmullRom();
-
 private:
 	// ワールド変換データ
 	WorldTransform worldTransform_;
