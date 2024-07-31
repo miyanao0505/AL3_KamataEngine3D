@@ -117,6 +117,7 @@
     <ClCompile Include="Script\Draw.cpp" />
     <ClCompile Include="Script\Enemy.cpp" />
     <ClCompile Include="Script\EnemyBullet.cpp" />
+    <ClCompile Include="Script\LockOn.cpp" />
     <ClCompile Include="Script\Matrix.cpp" />
     <ClCompile Include="Script\MyBase.cpp" />
     <ClCompile Include="Script\MyTools.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Script\Draw.h" />
     <ClInclude Include="Script\Enemy.h" />
     <ClInclude Include="Script\EnemyBullet.h" />
+    <ClInclude Include="Script\LockOn.h" />
     <ClInclude Include="Script\Matrix.h" />
     <ClInclude Include="Script\MyBase.h" />
     <ClInclude Include="Script\MyTools.h" />

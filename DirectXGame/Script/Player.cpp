@@ -44,7 +44,7 @@ Player::~Player() {
 	delete sprite2DReticle_;
 }
 
-void Player::Update(ViewProjection& viewProjection) {
+void Player::Update(ViewProjection& viewProjection, LockOn* lockOnMark) {
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState;
 
@@ -95,7 +95,7 @@ void Player::Update(ViewProjection& viewProjection) {
 	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, move);
 
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
-	/* {
+	 {
 		// 自機から3Dレティクルの距離
 		const float kDistancePlayerTo3DReticle = 50.0f;
 		// 自機から3Dレティクルへのオフセット(Z+向き)
@@ -107,10 +107,10 @@ void Player::Update(ViewProjection& viewProjection) {
 		// 3Dレティクルの座標を設定
 		worldTransform3DReticle_.translation_ = MyTools::Add(GetWorldPosition(), offset);
 		worldTransform3DReticle_.UpdateMatrix();
-	}*/
+	}
 
 	// 3Dレティクルのワールド座標から2Dレティクルのスクリーン座標を計算
-	/* { 
+	{ 
 		Vector3 positionReticle = Get3DReticleWorldPosition(); 
 	
 		// ビューポート行列
@@ -124,13 +124,13 @@ void Player::Update(ViewProjection& viewProjection) {
 
 		// スプライトのレティクルに座標設定
 		sprite2DReticle_->SetPosition(Vector2(positionReticle.x, positionReticle.y));
-	}*/
+	}
 
 	// マウスカーソルのスクリーン座標からワールド座標を取得して3Dレティクル配置
-	{ Set3DReticleFromMouseCursor(viewProjection); }
+	{ /*Set3DReticleFromMouseCursor(viewProjection);*/ }
 
 	// 攻撃処理
-	Attack();
+	Attack(lockOnMark);
 
 	// 弾更新
 	for (PlayerBullet* bullet : bullets_) {
@@ -141,6 +141,9 @@ void Player::Update(ViewProjection& viewProjection) {
 	worldTransform_.UpdateMatrix();
 	
 #ifdef _DEBUG
+	ImGui::SetNextWindowPos(ImVec2(10, 50), ImGuiCond_Once);   // ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(300, 60), ImGuiCond_Once); // ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
 	// キャラクターの座標を画面表示する処理
 	ImGui::Begin("Player");
 	// float3スライダー
@@ -174,7 +177,7 @@ void Player::Rotate() {
 	}
 }
 
-void Player::Attack() {
+void Player::Attack(LockOn* lockOnMark) {
 	XINPUT_STATE joyState;
 
 	// ゲームパッド未接続なら何もせず抜ける
@@ -185,11 +188,11 @@ void Player::Attack() {
 	// Rトリガーを押していたら
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 		// 弾の速度
-		const float kBulletSpeed = 1.0f;
+		const float kBulletSpeed = 2.0f;
 		Vector3 velocity(0, 0, 0);
 
 		// 自機から照準オブジェクトへのベクトル
-		velocity = MyTools::Subtract(Get3DReticleWorldPosition(), GetWorldPosition());
+		velocity = MyTools::Subtract(lockOnMark->GetTargetPos(), GetWorldPosition());
 		velocity = MyTools::Multiply(kBulletSpeed, MyTools::Normalize(velocity));
 
 		// 速度ベクトルを自機の向きに合わせて回転させる
@@ -312,8 +315,8 @@ void Player::Set3DReticleFromMouseCursor(ViewProjection& viewProjection) {
 	worldTransform3DReticle_.UpdateMatrix();
 
 #ifdef _DEBUG
-	ImGui::SetNextWindowPos(ImVec2(750, 50), ImGuiCond_Once);   // ウィンドウの座標(プログラム起動時のみ読み込み)
-	ImGui::SetNextWindowSize(ImVec2(450, 400), ImGuiCond_Once); // ウィンドウのサイズ(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowPos(ImVec2(20, 50), ImGuiCond_Once);   // ウィンドウの座標(プログラム起動時のみ読み込み)
+	ImGui::SetNextWindowSize(ImVec2(450, 60), ImGuiCond_Once); // ウィンドウのサイズ(プログラム起動時のみ読み込み)
 
 	ImGui::Begin("Player");
 	ImGui::Text("world %.2f, %.2f, %.2f", GetWorldPosition().x, GetWorldPosition().y, GetWorldPosition().z);
@@ -351,5 +354,5 @@ void Player::Draw(ViewProjection& viewProjection) {
 void Player::DrawUI()
 {
 	// 2Dレティクルを描画
-	sprite2DReticle_->Draw();
+	//sprite2DReticle_->Draw();
 }

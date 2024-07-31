@@ -56,6 +56,9 @@ void GameScene::Initialize() {
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, textureHandle_, playerPosition, textureReticle);
 
+	// ロックオンの生成
+	lockOnMark_ = new LockOn();
+
 	/// 敵発生データの読み込み
 	LoadEnemyPopData();
 
@@ -77,7 +80,8 @@ void GameScene::Initialize() {
 
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
-
+	lockOnMark_->Initialize(player_->GetSprite2DReticle(), player_->Get3DReticleWorldPosition());
+	
 	// ビュープロジェクションの初期化
 	debugCamera_->SetFarZ(1000);
 	viewProjection_.Initialize();
@@ -137,12 +141,15 @@ void GameScene::Update() {
 	UpdateEnemyPopCommands();
 
 	// 自キャラの更新
-	player_->Update(viewProjection_);
+	player_->Update(viewProjection_, lockOnMark_);
 
 	// 敵キャラの更新
 	for (Enemy* enemy : enemys_) {
 		enemy->Update();
 	}
+
+	// ロックオンの更新
+	lockOnMark_->Update(player_->GetWorldPosition(), enemys_, viewProjection_, player_->GetSprite2DReticle(), player_->Get3DReticleWorldPosition());
 
 	// 弾更新
 	for (EnemyBullet* enemyBullet : enemyBullets_) {
@@ -150,7 +157,6 @@ void GameScene::Update() {
 	}
 
 	// コライダー全てを衝突マネージャのリストに登録する
-	//collisionManager_->SetColliderList();
 	SetCollisionManager();
 	
 	// 衝突判定と応答
@@ -371,6 +377,8 @@ void GameScene::Draw() {
 
 	// 自キャラの2D描画
 	player_->DrawUI();
+
+	lockOnMark_->Draw();
 	
 	// スプライト描画後処理
 	Sprite::PostDraw();

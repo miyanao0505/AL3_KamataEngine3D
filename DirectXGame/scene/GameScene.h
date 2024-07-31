@@ -14,6 +14,7 @@
 #include "Script/Skydome.h"
 #include "Script/MyTools.h"
 #include "Script/CollisionManager.h"
+#include "Script/LockOn.h"
 #include "DebugCamera.h"
 
 /// <summary>
@@ -103,6 +104,7 @@ private: // メンバ変数
 
 	// 自キャラ
 	Player* player_ = nullptr;
+	LockOn* lockOnMark_ = nullptr;
 
 	// 敵キャラ
 	std::list<Enemy*> enemys_;

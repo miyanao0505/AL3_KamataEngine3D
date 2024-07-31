@@ -12,6 +12,7 @@
 #include "Matrix.h"
 #include "PlayerBullet.h"
 #include "Collider.h"
+#include "LockOn.h"
 
 /// <summary>
 /// 自キャラ
@@ -36,7 +37,7 @@ public:
 	/// 更新
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void Update(ViewProjection& viewProjection);
+	void Update(ViewProjection& viewProjection, LockOn* lockOnMark);
 	
 	/// <summary>
 	/// 旋回
@@ -46,7 +47,7 @@ public:
 	/// <summary>
 	/// 攻撃
 	/// </summary>
-	void Attack();
+	void Attack(LockOn* lockOnMark);
 
 	/// <summary>
 	/// ワールド座標を取得
@@ -75,6 +76,8 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	Sprite* GetSprite2DReticle() const { return sprite2DReticle_; }
 
 	/// <summary>
 	/// 親となるワールドトランスフォームをセット

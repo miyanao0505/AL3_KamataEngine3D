@@ -12,7 +12,7 @@ public:
 	// 更新
 	void Update();
 	// 完了ならtureを返す
-	bool IsFinished() { return isFinished_; };
+ 	bool IsFinished() { return isFinished_; };
 
 private:
 	// コールバック
