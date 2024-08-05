@@ -49,7 +49,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 }
 
 /// 更新
-void Enemy::Update() 
+void Enemy::Update(ViewProjection& viewProjection) 
 {
 	state_->Update();
 
@@ -69,6 +69,40 @@ void Enemy::Update()
 
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
+
+	// lockOnフラグが下がってる時
+	if (!isLockOn_)
+	{
+		if (player_->GetWorldPosition().z >= GetWorldPosition().z)
+		{
+			return;
+		}
+
+		// ビューポート行列
+		Matrix4x4 matViewport = Matrix::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+		// ビュー行列とプロジェクション行列、ビューポート行列を合成する
+		Matrix4x4 matViewProjectionViewport = Matrix::Multiply(Matrix::Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+
+		// ワールド→スクリーン座標変換(ここで3Dから2Dになる)
+		Vector3 position = Matrix::Transform(GetWorldPosition(), matViewProjectionViewport);
+
+		// 距離
+		float distance = MyTools::Length(MyTools::Subtract(position, { player_->GetSprite2DReticle()->GetPosition().x, player_->GetSprite2DReticle()->GetPosition().y, 0.0f}));
+
+		// 敵のサイズ
+		float enemySize = 1.0f - (GetWorldPosition().z - player_->GetWorldPosition().z) / 30;
+
+		// レティクルと敵の衝突判定
+		if (distance <= enemySize + player_->GetReticleSize()) {
+			LockOn* newLockOn = new LockOn();
+			newLockOn->Initialize(player_->GetSprite2DReticle()->GetTextureHandle(), {position.x, position.y}, this);
+			
+			gameScene_->AddLockOnMark(newLockOn);
+
+			isLockOn_ = true;
+		}
+	}
 }
 
 /// 状態変更

@@ -56,9 +56,6 @@ void GameScene::Initialize() {
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, textureHandle_, playerPosition, textureReticle);
 
-	// ロックオンの生成
-	lockOnMark_ = new LockOn();
-
 	/// 敵発生データの読み込み
 	LoadEnemyPopData();
 
@@ -76,11 +73,10 @@ void GameScene::Initialize() {
 	// レールカメラの生成
 	railCamera_ = new RailCamera();
 	// レールカメラの初期化
-	railCamera_->Initialize({0.0f, 0.0f, -50.f}, {0.0f, 0.0f, 0.0f});
+	railCamera_->Initialize({0.0f, 0.0f, -100.f}, {0.0f, 0.0f, 0.0f});
 
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
-	lockOnMark_->Initialize(player_->GetSprite2DReticle(), player_->Get3DReticleWorldPosition());
 	
 	// ビュープロジェクションの初期化
 	debugCamera_->SetFarZ(1000);
@@ -92,7 +88,7 @@ void GameScene::Initialize() {
 
 	// レールカメラの軌跡
 	controlPoints_ = {
-		{0.f, 0.f, -200.f},
+		{0.f, 0.f, 0.f},
 		{0.f, 0.f, 0.f },
 	};
 	// 線分の数
@@ -145,12 +141,31 @@ void GameScene::Update() {
 
 	// 敵キャラの更新
 	for (Enemy* enemy : enemys_) {
-		enemy->Update();
+		enemy->Update(viewProjection_);
 	}
 
 	// ロックオンの更新
-	lockOnMark_->Update(player_->GetWorldPosition(), enemys_, viewProjection_, player_->GetSprite2DReticle(), player_->Get3DReticleWorldPosition());
+	bool isListAllDead = false;
+	// リストのループ処理
+	for (LockOn* lockOn : lockOnMark_)
+	{
+		if (lockOn->IsDead())
+		{
+			isListAllDead = true;
+		}
+		else
+		{
+			// ロックオンの更新
+			lockOn->Update(viewProjection_);
 
+			isListAllDead = false;
+		}
+	}
+	if (isListAllDead)
+	{
+		lockOnMark_.clear();
+	}
+	
 	// 弾更新
 	for (EnemyBullet* enemyBullet : enemyBullets_) {
 		enemyBullet->Update();
@@ -320,6 +335,12 @@ void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet)
 	enemyBullets_.push_back(enemyBullet);
 }
 
+void GameScene::AddLockOnMark(LockOn* lockOnMark)
+{
+	// リストに登録する
+	lockOnMark_.push_back(lockOnMark);
+}
+
 void GameScene::Draw() {
 
 	// コマンドリストの取得
@@ -378,8 +399,12 @@ void GameScene::Draw() {
 	// 自キャラの2D描画
 	player_->DrawUI();
 
-	lockOnMark_->Draw();
-	
+	// ロックオンの描画
+	// リストのループ処理
+	for (LockOn* lockOn : lockOnMark_) {
+		// ロックオンの描画
+		lockOn->Draw();
+	}
 	// スプライト描画後処理
 	Sprite::PostDraw();
 

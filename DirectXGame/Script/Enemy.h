@@ -7,6 +7,7 @@
 #include "EnemyBullet.h"
 #include "TimedCall.h"
 #include "Collider.h"
+#include "LockOn.h"
 
 // 自機クラスの前方宣言
 class Player;
@@ -75,7 +76,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(ViewProjection& viewProjection);
 
 	/// <summary>
 	/// 状態変更
@@ -149,6 +150,10 @@ public:
 	/// <returns></returns>
 	bool IsDead() const { return isDead_; }
 
+	void SetLockOnFlag() { isLockOn_ = true; }
+
+	bool IsLockOn() const { return isLockOn_; }
+
 	/// <summary>
 	/// ゲームシーンをセット
 	/// </summary>
@@ -190,6 +195,9 @@ private:
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	// ロックオンフラグ
+	bool isLockOn_ = false;
 
 	// 時限発動のリスト
 	std::list<TimedCall*> timedCalls_;

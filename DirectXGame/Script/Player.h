@@ -37,7 +37,7 @@ public:
 	/// 更新
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void Update(ViewProjection& viewProjection, LockOn* lockOnMark);
+	void Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMark);
 	
 	/// <summary>
 	/// 旋回
@@ -47,7 +47,7 @@ public:
 	/// <summary>
 	/// 攻撃
 	/// </summary>
-	void Attack(LockOn* lockOnMark);
+	void Attack(std::list<LockOn*> lockOnMark);
 
 	/// <summary>
 	/// ワールド座標を取得
@@ -78,6 +78,8 @@ public:
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 
 	Sprite* GetSprite2DReticle() const { return sprite2DReticle_; }
+
+	float GetReticleSize() { return radius2DReticle_; }
 
 	/// <summary>
 	/// 親となるワールドトランスフォームをセット
@@ -118,4 +120,5 @@ private:
 
 	// 2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
+	const float radius2DReticle_ = 55.f;
 };

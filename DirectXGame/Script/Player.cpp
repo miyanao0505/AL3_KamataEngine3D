@@ -44,7 +44,7 @@ Player::~Player() {
 	delete sprite2DReticle_;
 }
 
-void Player::Update(ViewProjection& viewProjection, LockOn* lockOnMark) {
+void Player::Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMark) {
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState;
 
@@ -177,7 +177,7 @@ void Player::Rotate() {
 	}
 }
 
-void Player::Attack(LockOn* lockOnMark) {
+void Player::Attack(std::list<LockOn*> lockOnMark) {
 	XINPUT_STATE joyState;
 
 	// ゲームパッド未接続なら何もせず抜ける
@@ -187,23 +187,45 @@ void Player::Attack(LockOn* lockOnMark) {
 
 	// Rトリガーを押していたら
 	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
-		// 弾の速度
-		const float kBulletSpeed = 2.0f;
-		Vector3 velocity(0, 0, 0);
+		for (LockOn* lockOn : lockOnMark) {
+			// 弾の速度
+			const float kBulletSpeed = 2.0f;
+			Vector3 velocity(0, 0, 0);
 
-		// 自機から照準オブジェクトへのベクトル
-		velocity = MyTools::Subtract(lockOnMark->GetTargetPos(), GetWorldPosition());
-		velocity = MyTools::Multiply(kBulletSpeed, MyTools::Normalize(velocity));
+			// 自機から照準オブジェクトへのベクトル
+			velocity = MyTools::Subtract(lockOn->GetTargetPos(), GetWorldPosition());
+			velocity = MyTools::Multiply(kBulletSpeed, MyTools::Normalize(velocity));
 
-		// 速度ベクトルを自機の向きに合わせて回転させる
-		//velocity = Matrix::TransformNormal(velocity, Matrix::Inverse(worldTransform_.parent_->matWorld_));
+			// 速度ベクトルを自機の向きに合わせて回転させる
+			// velocity = Matrix::TransformNormal(velocity, Matrix::Inverse(worldTransform_.parent_->matWorld_));
 
-		// 弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity, 0);
+			// 弾を生成し、初期化
+			PlayerBullet* newBullet = new PlayerBullet();
+			newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity, 0);
 
-		// 弾を登録する
-		bullets_.push_back(newBullet);
+			// 弾を登録する
+			bullets_.push_back(newBullet);
+		}
+		if (lockOnMark.size() <= 0)
+		{
+			// 弾の速度
+			const float kBulletSpeed = 2.0f;
+			Vector3 velocity(0, 0, 0);
+
+			// 自機から照準オブジェクトへのベクトル
+			velocity = MyTools::Subtract(Get3DReticleWorldPosition(), GetWorldPosition());
+			velocity = MyTools::Multiply(kBulletSpeed, MyTools::Normalize(velocity));
+
+			// 速度ベクトルを自機の向きに合わせて回転させる
+			// velocity = Matrix::TransformNormal(velocity, Matrix::Inverse(worldTransform_.parent_->matWorld_));
+
+			// 弾を生成し、初期化
+			PlayerBullet* newBullet = new PlayerBullet();
+			newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity, 0);
+
+			// 弾を登録する
+			bullets_.push_back(newBullet);
+		}
 	}
 
 	// 発射キーをトリガーしたら(キーボード)
@@ -354,5 +376,5 @@ void Player::Draw(ViewProjection& viewProjection) {
 void Player::DrawUI()
 {
 	// 2Dレティクルを描画
-	//sprite2DReticle_->Draw();
+	sprite2DReticle_->Draw();
 }

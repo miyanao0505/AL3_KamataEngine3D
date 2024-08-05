@@ -70,6 +70,8 @@ public: // メンバ関数
 	/// <param name="enemyBullet">敵弾</param>
 	void AddEnemyBullet(EnemyBullet* enemyBullet);
 
+	void AddLockOnMark(LockOn* lockOnMark);
+
 	ViewProjection* GetVeiwProjection() { return &viewProjection_; }
 
 	/// <summary>
@@ -104,7 +106,7 @@ private: // メンバ変数
 
 	// 自キャラ
 	Player* player_ = nullptr;
-	LockOn* lockOnMark_ = nullptr;
+	std::list<LockOn*> lockOnMark_;
 
 	// 敵キャラ
 	std::list<Enemy*> enemys_;
