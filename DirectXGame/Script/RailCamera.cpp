@@ -11,6 +11,7 @@ void RailCamera::Initialize(const Vector3& position, const Vector3& rotate)
 	worldTransform_.translation_ = position;
 	worldTransform_.rotation_ = rotate;
 	// ビュープロジェクションの初期化
+	viewProjection_.farZ = 1000.f;
 	viewProjection_.Initialize();
 }
 
@@ -21,11 +22,11 @@ void RailCamera::Update(const Vector3& eye, const Vector3& target)
 
 	// 進行方向に見た目の回転を合わせる
 	// Y軸周り角度(θy)
-	worldTransform_.rotation_.y = std::atan2(target.x, target.z);
-	float velocityXZ = MyTools::Length(MyTools::Subtract(target, Vector3{0.0f, target.y, 0.0f}));
+	//worldTransform_.rotation_.y = std::atan2(target.x, target.z);
+	//float velocityXZ = MyTools::Length(MyTools::Subtract(target, Vector3{0.0f, target.y, 0.0f}));
 	// X軸周り角度(θx)
-	worldTransform_.rotation_.x = std::atan2(-target.y, velocityXZ);
-
+	//worldTransform_.rotation_.x = std::atan2(-target.y, velocityXZ);
+	target;
 	// ワールドトランスフォームの角度の数値を加算したりする(回転)
 	//worldTransform_.rotation_ = MyTools::Add(worldTransform_.rotation_, {0.0f, /*float(M_PI) / 120*/0.f, 0.0f});
 	// ワールドトランスフォームのワールド行列再計算

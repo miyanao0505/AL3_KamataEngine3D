@@ -52,7 +52,7 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 	// 自機の位置調整
-	Vector3 playerPosition(0, 0, 50);
+	Vector3 playerPosition(0, -0.9f, -0.5f);
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, textureHandle_, playerPosition, textureReticle);
 
@@ -73,7 +73,7 @@ void GameScene::Initialize() {
 	// レールカメラの生成
 	railCamera_ = new RailCamera();
 	// レールカメラの初期化
-	railCamera_->Initialize({0.0f, 0.0f, -100.f}, {0.0f, 0.0f, 0.0f});
+	railCamera_->Initialize({0.0f, 0.0f, -50.f}, {0.0f, 0.0f, 0.0f});
 
 	// 自キャラとレールカメラの親子関係を結ぶ
 	player_->SetParent(&railCamera_->GetWorldTransform());
@@ -137,7 +137,7 @@ void GameScene::Update() {
 	UpdateEnemyPopCommands();
 
 	// 自キャラの更新
-	player_->Update(viewProjection_, lockOnMark_);
+	player_->Update(lockOnMark_, *railCamera_);
 
 	// 敵キャラの更新
 	for (Enemy* enemy : enemys_) {
@@ -187,7 +187,11 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	// レールカメラの更新
-	railCamera_->Update(pointsDrawing.at(t), MyTools::Subtract(pointsDrawing.at(forwardt), pointsDrawing.at(t)));
+	//Vector3 move = MyTools::Subtract(player_->GetWorldPosition(), {0.0f, -0.9f, 0.0f} /*railCamera_->GetWorldTransform().translation_*/);
+	//move.x = 0.0f;
+	//move.y = 0.0f;
+	//move.z = 0.0f;
+	//railCamera_->Update(move, {0.0f, 0.0f, 1.0f} /*MyTools::Subtract(pointsDrawing.at(forwardt), pointsDrawing.at(t))*/);
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 	// ビュープロジェクション行列の転送

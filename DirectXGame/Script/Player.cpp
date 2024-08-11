@@ -44,7 +44,7 @@ Player::~Player() {
 	delete sprite2DReticle_;
 }
 
-void Player::Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMark) {
+void Player::Update(std::list<LockOn*> lockOnMark, RailCamera& railCamera) {
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState;
 
@@ -92,7 +92,10 @@ void Player::Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMar
 	}*/
 
 	// 座標移動(ベクトルの加算)
-	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, move);
+	//worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, move);
+
+	
+	railCamera.Update(MyTools::Add(railCamera.GetWorldTransform().translation_, move), {0.0f, 0.0f, 1.0f});
 
 	// 自機のワールド座標から3Dレティクルのワールド座標を計算
 	 {
@@ -117,7 +120,7 @@ void Player::Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMar
 		Matrix4x4 matViewport = Matrix::MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
 
 		// ビュー行列とプロジェクション行列、ビューポート行列を合成する
-		Matrix4x4 matViewProjectionViewport = Matrix::Multiply(Matrix::Multiply(viewProjection.matView, viewProjection.matProjection), matViewport);
+		Matrix4x4 matViewProjectionViewport = Matrix::Multiply(Matrix::Multiply(railCamera.GetViewProjection().matView, railCamera.GetViewProjection().matProjection), matViewport);
 
 		// ワールド→スクリーン座標変換(ここで3Dから2Dになる)
 		positionReticle = Matrix::Transform(positionReticle, matViewProjectionViewport);

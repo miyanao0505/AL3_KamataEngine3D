@@ -13,6 +13,9 @@
 #include "PlayerBullet.h"
 #include "Collider.h"
 #include "LockOn.h"
+#include "RailCamera.h"
+
+class RailCamera;
 
 /// <summary>
 /// 自キャラ
@@ -37,7 +40,7 @@ public:
 	/// 更新
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
-	void Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMark);
+	void Update(std::list<LockOn*> lockOnMark, RailCamera& railCamera);
 	
 	/// <summary>
 	/// 旋回
