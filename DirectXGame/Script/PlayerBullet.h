@@ -68,7 +68,7 @@ public:
 	/// <param name="position">初期座標</param>
 	/// <param name="velocity">速度</param>
 	/// <param name="type">タイプ 0:通常 1:ホーミング</param>
-	void Initialize(Model* model, const Vector3& position, const Vector3& velocity, uint32_t type);
+	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 
 	/// <summary>
 	/// 更新
@@ -99,12 +99,6 @@ public:
 	/// </summary>
 	/// <param name="rotate">角度</param>
 	void SetRotate(const Vector3& rotate) { worldTransform_.rotation_ = rotate; }
-
-	/// <summary>
-	/// タイプをセット
-	/// </summary>
-	/// <param name="type">タイプ 0:通常 1:ホーミング</param>
-	void SetType(uint32_t type);
 
 	/// <summary>
 	/// 親となるワールドトランスフォームをセット

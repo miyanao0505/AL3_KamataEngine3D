@@ -7,12 +7,15 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "WinApp.h"
-#include "imgui.h"
 #include "MyTools.h"
 #include "Matrix.h"
 #include "PlayerBullet.h"
 #include "Collider.h"
 #include "LockOn.h"
+
+#ifdef _DEBUG
+#include "imgui.h"
+#endif // DEBUG
 
 /// <summary>
 /// 自キャラ
@@ -82,6 +85,12 @@ public:
 	float GetReticleSize() { return radius2DReticle_; }
 
 	/// <summary>
+	/// デスフラグが立っているか
+	/// </summary>
+	/// <returns></returns>
+	bool IsDead() const { return isDead_; }
+
+	/// <summary>
 	/// 親となるワールドトランスフォームをセット
 	/// </summary>
 	/// <param name="parent">親となるワールドトランスフォーム</param>
@@ -121,4 +130,7 @@ private:
 	// 2Dレティクル用スプライト
 	Sprite* sprite2DReticle_ = nullptr;
 	const float radius2DReticle_ = 55.f;
+
+	int hp_;
+	bool isDead_ = false;
 };

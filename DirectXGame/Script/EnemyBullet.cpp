@@ -10,7 +10,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	model_ = model;
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("enemybullet.png");
+	textureHandle_ = TextureManager::Load("enemyBullet/enemyBullet.png");
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -19,9 +19,9 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	worldTransform_.translation_ = position;
 
 	// Z方向に伸びた形状
-	worldTransform_.scale_.x = 0.5f;
+	/*worldTransform_.scale_.x = 0.5f;
 	worldTransform_.scale_.y = 0.5f;
-	worldTransform_.scale_.z = 3.0f;
+	worldTransform_.scale_.z = 3.0f;*/
 
 	// ワールドトランスフォームの更新
 	worldTransform_.UpdateMatrix();
@@ -44,23 +44,23 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 void EnemyBullet::Update()
 {
 	// 敵弾から自キャラへのベクトルを計算
-	Vector3 playerPos = player_->GetWorldPosition();
-	Vector3 enemyBulletPos = GetWorldPosition();
-	Vector3 toPlayer = MyTools::Subtract(playerPos, enemyBulletPos);
+	//Vector3 playerPos = player_->GetWorldPosition();
+	//Vector3 enemyBulletPos = GetWorldPosition();
+	//Vector3 toPlayer = MyTools::Subtract(playerPos, enemyBulletPos);
 
-	// ベクトルを正規化する
-	toPlayer = MyTools::Normalize(toPlayer);
-	Vector3 velocity = MyTools::Normalize(velocity_);
+	//// ベクトルを正規化する
+	//toPlayer = MyTools::Normalize(toPlayer);
+	//Vector3 velocity = MyTools::Normalize(velocity_);
 
-	// 球面線形補間により、今の速度と自キャラへのベクトルを内挿し、新たな速度とする
-	velocity_ = MyTools::Multiply(speed_, MyTools::Slerp(velocity_, toPlayer, 0.08f));
+	//// 球面線形補間により、今の速度と自キャラへのベクトルを内挿し、新たな速度とする
+	//velocity_ = MyTools::Multiply(speed_, MyTools::Slerp(velocity_, toPlayer, 0.08f));
 
 	// 進行方向に見た目の回転を合わせる
 	// Y軸周り角度(θy)
-	worldTransform_.rotation_.y = std::atan2(velocity.x, velocity.z);
-	float velocityXZ = MyTools::Length(MyTools::Subtract(velocity, Vector3{0.0f, velocity.y, 0.0f}));
+	//worldTransform_.rotation_.y = std::atan2(velocity.x, velocity.z);
+	//float velocityXZ = MyTools::Length(MyTools::Subtract(velocity, Vector3{0.0f, velocity.y, 0.0f}));
 	// X軸周り角度(θx)
-	worldTransform_.rotation_.x = std::atan2(-velocity.y, velocityXZ);
+	//worldTransform_.rotation_.x = std::atan2(-velocity.y, velocityXZ);
 
 	// 座標を移動させる(1フレーム分の移動量を足し込む)
 	worldTransform_.translation_ = MyTools::Add(worldTransform_.translation_, velocity_);
@@ -69,9 +69,9 @@ void EnemyBullet::Update()
 	worldTransform_.UpdateMatrix();
 
 	// 時間経過でデス
-	/*if (--deathTimer_ <= 0) {
+	if (--deathTimer_ <= 0) {
 		isDead_ = true;
-	}*/
+	}
 }
 
 /// ワールド座標を取得

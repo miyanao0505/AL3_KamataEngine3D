@@ -114,7 +114,6 @@
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="Script\Collider.cpp" />
     <ClCompile Include="Script\CollisionManager.cpp" />
-    <ClCompile Include="Script\Draw.cpp" />
     <ClCompile Include="Script\Enemy.cpp" />
     <ClCompile Include="Script\EnemyBullet.cpp" />
     <ClCompile Include="Script\LockOn.cpp" />
@@ -160,7 +159,6 @@
     <ClInclude Include="Script\Collider.h" />
     <ClInclude Include="Script\CollisionConfig.h" />
     <ClInclude Include="Script\CollisionManager.h" />
-    <ClInclude Include="Script\Draw.h" />
     <ClInclude Include="Script\Enemy.h" />
     <ClInclude Include="Script\EnemyBullet.h" />
     <ClInclude Include="Script\LockOn.h" />

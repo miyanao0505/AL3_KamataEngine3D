@@ -31,14 +31,12 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 	// 引数で受け取った初期座標をセット
 	worldTransform_.translation_ = position;
+	worldTransform_.rotation_.y = float(M_PI);
 
 	// 引数で受け取った速度をメンバ変数に代入
 	approachVelocity_ = velocity;
 	leaveVelocity_ = {-0.1f, 0.1f, -0.1f};
 	
-	// 初期状態をセット
-	ChangeState(std::make_unique<EnemyStateApproach>(this));
-
 	// 接近フェーズ初期化
 	ApproachInitialize();
 
@@ -51,7 +49,11 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 /// 更新
 void Enemy::Update(ViewProjection& viewProjection) 
 {
-	state_->Update();
+	PositionUpdate(approachVelocity_);
+
+	if (GetPosition().z < player_->GetWorldPosition().z) {
+		Clear();
+	}
 
 	// 終了したタイマーを削除
 	timedCalls_.remove_if([](TimedCall* timedCall) {
@@ -103,13 +105,6 @@ void Enemy::Update(ViewProjection& viewProjection)
 			isLockOn_ = true;
 		}
 	}
-}
-
-/// 状態変更
-void Enemy::ChangeState(std::unique_ptr<BaseEnemyState> state)
-{ 
-	// 引数で受け取った状態を次の状態としてセットする
-	state_ = std::move(state);
 }
 
 /// 接近フェーズ初期化
@@ -212,34 +207,3 @@ void Enemy::Draw(const ViewProjection& viewProjection)
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 }
 
-/// EnemyStateApproachクラスの実装
-EnemyStateApproach::EnemyStateApproach(Enemy* enemy) : BaseEnemyState("State Approach", enemy) 
-{
-	// 接近フェーズ初期化
-	enemy->ApproachInitialize();
-}
-
-// 更新
-void EnemyStateApproach::Update() 
-{ 
-	enemy_->PositionUpdate(enemy_->GetApproachVelocity());
-
-	if (enemy_->GetPosition().z < 0.0f)
-	{
-		enemy_->Clear();
-
-		enemy_->ChangeState(std::make_unique<EnemyStateLeave>(enemy_));
-	}
-}
-
-/// EnemyStateLeaveクラスの実装
-EnemyStateLeave::EnemyStateLeave(Enemy* enemy) : BaseEnemyState("State Leave", enemy)
-{
-
-}
-
-// 更新
-void EnemyStateLeave::Update() 
-{ 
-	enemy_->PositionUpdate(enemy_->GetLeaveVelocity());
-}

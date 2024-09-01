@@ -3,13 +3,13 @@
 #include "TextureManager.h"
 #include "Enemy.h"
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity, uint32_t type) {
+void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	// NULLポインタチェック
 	assert(model);
 
 	model_ = model;
 	// テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("cube/cube.jpg");
+	textureHandle_ = TextureManager::Load("playerBullet/playerBullet.png");
 
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
@@ -19,9 +19,6 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 	// 引数で受け取った速度をメンバ変数に代入
 	velocity_ = velocity;
-
-	// タイプをセット
-	SetType(type);
 
 	// 衝突属性を設定
 	SetCollisionAttribute(kCollisionAttributePlayer);
@@ -61,16 +58,6 @@ Vector3 PlayerBullet::GetWorldPosition() {
 void PlayerBullet::OnCollision() 
 { 
 	isDead_ = true;
-}
-
-// タイプをセット
-void PlayerBullet::SetType(uint32_t type)
-{
-	/*if (type == 0) {
-		type_ = std::move(std::make_unique<PlayerBulletTypeNormal>(this));
-	} else if (type == 1) {
-		type_ = std::move(std::make_unique<PlayerBulletTypeHoming>(this));
-	}*/
 }
 
 /// 親となるワールドトランスフォームをセット

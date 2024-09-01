@@ -9,7 +9,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 position, 
 
 	// 3Dモデルの生成
 	modelPlayer_ = model;
-	modelBullet_ = Model::CreateFromOBJ("cube", true);
+	modelBullet_ = Model::CreateFromOBJ("playerBullet", true);
 	
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = textureHandle;
@@ -32,6 +32,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle, Vector3 position, 
 
 	// スプライト
 	sprite2DReticle_ = Sprite::Create(reticleTextureHandle, {640.0f, 360.0f}, {1, 1, 1, 1}, {0.5f, 0.5f});
+
+	hp_ = 10;
 }
 
 Player::~Player() {
@@ -65,9 +67,6 @@ void Player::Update(ViewProjection& viewProjection, std::list<LockOn*> lockOnMar
 
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
-
-	// キャラクターの移動速さ
-	const float kCharacterSpeed = 0.2f;
 
 	// ゲームパッド操作
 	// ゲームパッド状態取得
@@ -201,7 +200,7 @@ void Player::Attack(std::list<LockOn*> lockOnMark) {
 
 			// 弾を生成し、初期化
 			PlayerBullet* newBullet = new PlayerBullet();
-			newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity, 0);
+			newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity);
 
 			// 弾を登録する
 			bullets_.push_back(newBullet);
@@ -221,7 +220,7 @@ void Player::Attack(std::list<LockOn*> lockOnMark) {
 
 			// 弾を生成し、初期化
 			PlayerBullet* newBullet = new PlayerBullet();
-			newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity, 0);
+			newBullet->Initialize(modelBullet_, GetWorldPosition(), velocity);
 
 			// 弾を登録する
 			bullets_.push_back(newBullet);
@@ -348,9 +347,12 @@ void Player::Set3DReticleFromMouseCursor(ViewProjection& viewProjection) {
 }
 
 // 衝突を検出したら呼び出されるコールバック関数
-void Player::OnCollision() 
-{
+void Player::OnCollision() { 
+	hp_--;
 
+	if (hp_ <= 0) {
+		isDead_ = true;
+	}
 }
 
 /// 親となるワールドトランスフォームをセット

@@ -15,48 +15,6 @@ class Player;
 // GameSceneの前方宣言
 class GameScene;
 
-class Enemy;	// Enemyクラスの前方宣言
-
-// 敵の状態基底
-class BaseEnemyState
-{
-public:
-	BaseEnemyState(const std::string& name, Enemy* enemy) : name_(name), enemy_(enemy){};
-
-	// 毎フレーム処理(純粋仮想関数)
-	virtual void Update() = 0;
-
-	protected:
-		// 状態名
-	    std::string name_;
-		// 操作対象の敵
-	    Enemy* enemy_ = nullptr;
-};
-
-/// <summary>
-/// 接近フェーズ
-/// </summary>
-class EnemyStateApproach : public BaseEnemyState
-{
-public:
-	// コンストラクタ
-	EnemyStateApproach(Enemy* enemy);
-	// 更新
-	void Update();
-};
-
-/// <summary>
-/// 離脱フェーズ
-/// </summary>
-class EnemyStateLeave : public BaseEnemyState
-{
-public:
-	// コンストラクタ
-	EnemyStateLeave(Enemy* enemy);
-	// 更新
-	void Update();
-};
-
 /// <summary>
 /// 敵
 /// </summary>
@@ -77,12 +35,6 @@ public:
 	/// 更新
 	/// </summary>
 	void Update(ViewProjection& viewProjection);
-
-	/// <summary>
-	/// 状態変更
-	/// </summary>
-	/// <param name="newState"></param>
-	void ChangeState(std::unique_ptr<BaseEnemyState> state);
 
 	/// <summary>
 	/// 接近フェーズ初期化
@@ -186,9 +138,6 @@ private:
 	// 速度
 	Vector3 approachVelocity_;		// 接近フェーズの速度
 	Vector3 leaveVelocity_;			// 離脱フェーズの速度
-
-	// 状態
-	std::unique_ptr<BaseEnemyState> state_;
 
 	// ゲームシーン
 	GameScene* gameScene_ = nullptr;

@@ -86,14 +86,19 @@ private: // メンバ変数
 
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+	uint32_t textureHandleTitle_ = 0;
+	uint32_t textureHandleClear_ = 0;
+	uint32_t textureHandleGameOver_ = 0;
+
+	// スプライト
+	Sprite* spriteTitle_ = nullptr;
+	Sprite* spriteClear_ = nullptr;
+	Sprite* spriteGameOver_ = nullptr;
 
 	// 3Dモデルデータ
 	Model* model_ = nullptr;
-
-	// 3Dモデルデータ
 	Model* modelPlayer_ = nullptr;
-
-	// 3Dモデル
+	Model* modelEnemyBullet_ = nullptr;
 	Model* modelSkydome_ = nullptr;
 
 	// ワールドトランスフォーム
@@ -135,8 +140,22 @@ private: // メンバ変数
 
 	PrimitiveDrawer* primitiveDrawer_ = nullptr;
 
-	int t;
-	int forwardt;
+	int t_;
+	int forwardt_;
+
+	const float maxLength_ = 450.f;
+	float nowLen_;
+	const float move_ = 0.2f;
+
+	// フラグ
+	bool isDebug_ = false;
+	bool isTitle_ = true;
+	bool isGame_ = false;
+	bool isClear_ = false;
+	bool isGameOver_ = false;
+
+	const float maxTime_ = 50.f;
+	float time_;
 
 	/// <summary>
 	/// ゲームシーン用

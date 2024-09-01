@@ -9,6 +9,8 @@ GameScene::GameScene() {}
 
 GameScene::~GameScene() { 
 	delete model_;
+	delete modelEnemyBullet_;
+	delete modelPlayer_;
 	delete modelSkydome_;
 	delete player_;
 	delete skydome_;
@@ -35,9 +37,18 @@ void GameScene::Initialize() {
 
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("player/player.png");
+	textureHandleTitle_ = TextureManager::Load("Texture/Title.png");
+	textureHandleClear_ = TextureManager::Load("Texture/Clear.png");
+	textureHandleGameOver_ = TextureManager::Load("Texture/GameOver.png");
+
+	// スプライトの生成
+	spriteTitle_ = Sprite::Create(textureHandleTitle_, {640.f, 360.f}, {1, 1, 1, 1}, {0.5f, 0.5f});
+	spriteClear_ = Sprite::Create(textureHandleClear_, {640.f, 360.f}, {1, 1, 1, 1}, {0.5f, 0.5f});
+	spriteGameOver_ = Sprite::Create(textureHandleGameOver_, {640.f, 360.f}, {1, 1, 1, 1}, {0.5f, 0.5f});
 
 	// 3Dモデルの生成
-	model_ = Model::CreateFromOBJ("cube", true);
+	model_ = Model::CreateFromOBJ("playerBullet", true);
+	modelEnemyBullet_ = Model::CreateFromOBJ("enemyBullet", true);
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
@@ -103,111 +114,204 @@ void GameScene::Initialize() {
 	}
 
 	// 軸方向表示の表示を有効にする
-	AxisIndicator::GetInstance()->SetVisible(true);
+	AxisIndicator::GetInstance()->SetVisible(false);
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	t = 0;
-	forwardt = t + 50;
+	t_ = 0;
+	forwardt_ = t_ + 50;
+
+	nowLen_ = 0.f;
 }
 
 void GameScene::Update() {
-	// デスフラグの立った弾を削除
-	enemyBullets_.remove_if([](EnemyBullet* enemyBullet) {
-		if (enemyBullet->IsDead()) {
-			delete enemyBullet;
-			return true;
-		}
-		return false;
-	});
+	XINPUT_STATE joyState;
 
-	// デスフラグの立った敵を削除
-	enemys_.remove_if([](Enemy* enemy) {
-		if (enemy->IsDead()) {
-			delete enemy;
-			return true;
-		}
-		return false;
-	});
-
-	// 衝突マネージャのリストをクリア
-	collisionManager_->Clear();
-
-	/// 敵発生コマンドの更新
-	UpdateEnemyPopCommands();
-
-	// 自キャラの更新
-	player_->Update(viewProjection_, lockOnMark_);
-
-	// 敵キャラの更新
-	for (Enemy* enemy : enemys_) {
-		enemy->Update(viewProjection_);
+	// ゲームパッド未接続なら何もせず抜ける
+	if (!Input::GetInstance()->GetJoystickState(0, joyState)) {
+		return;
 	}
-
-	// ロックオンの更新
-	bool isListAllDead = false;
-	// リストのループ処理
-	for (LockOn* lockOn : lockOnMark_)
-	{
-		if (lockOn->IsDead())
-		{
-			isListAllDead = true;
-		}
-		else
-		{
-			// ロックオンの更新
-			lockOn->Update(viewProjection_);
-
-			isListAllDead = false;
-		}
-	}
-	if (isListAllDead)
-	{
-		lockOnMark_.clear();
-	}
-	
-	// 弾更新
-	for (EnemyBullet* enemyBullet : enemyBullets_) {
-		enemyBullet->Update();
-	}
-
-	// コライダー全てを衝突マネージャのリストに登録する
-	SetCollisionManager();
-	
-	// 衝突判定と応答
-	collisionManager_->CheckAllCollisions();
 
 #ifdef _DEBUG
-	if (input_->TriggerKey(DIK_P)) {
-		isDebugCameraActive_ = !isDebugCameraActive_;
+	if (input_->TriggerKey(DIK_O)) {
+		isDebug_ = !isDebug_;
 	}
+
+	if (isDebug_) {
+		if (input_->TriggerKey(DIK_1)) {
+			isTitle_ = true;
+			isGame_ = false;
+			isClear_ = false;
+		}
+		if (input_->TriggerKey(DIK_2)) {
+			isTitle_ = false;
+			isGame_ = true;
+			isClear_ = false;
+		}
+		if (input_->TriggerKey(DIK_3)) {
+			isTitle_ = false;
+			isGame_ = false;
+			isClear_ = true;
+		}
+	}
+
 #endif // _DEBUG
 
-	// 天球
-	skydome_->Update();
+	if (isTitle_) {
+		time_--;
 
-	// レールカメラの更新
-	railCamera_->Update(pointsDrawing.at(t), MyTools::Subtract(pointsDrawing.at(forwardt), pointsDrawing.at(t)));
-	viewProjection_.matView = railCamera_->GetViewProjection().matView;
-	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
-	// ビュープロジェクション行列の転送
-	viewProjection_.TransferMatrix();
+		if ((joyState.Gamepad.wButtons && XINPUT_GAMEPAD_A) && time_ <= 0.0f) {
+			isTitle_ = false;
+			isGame_ = true;
+			isClear_ = false;
+			isGameOver_ = false;
 
-	// カメラの処理
-	if (isDebugCameraActive_) {
-		// デバッグカメラの更新
-		debugCamera_->Update();
-	} else {
-		// ビュープロジェクション行列の更新と転送
-		//viewProjection_.UpdateMatrix();
+			Initialize();
+		}
 	}
 
-	t++;
-	forwardt++;
-	if (t + 50 > 500)
-	{
-		t = 450;
-		forwardt = 500;
+	if (isGame_) {
+		if (nowLen_ >= maxLength_) {
+			isTitle_ = false;
+			isGame_ = false;
+			isClear_ = true;
+			isGameOver_ = false;
+
+			return;
+		}
+
+		if (player_->IsDead()) {
+			isGameOver_ = true;
+			isTitle_ = false;
+			isGame_ = false;
+			isClear_ = false;
+
+			return;
+		}
+
+		// デスフラグの立った弾を削除
+		enemyBullets_.remove_if([](EnemyBullet* enemyBullet) {
+			if (enemyBullet->IsDead()) {
+				delete enemyBullet;
+				return true;
+			}
+			return false;
+		});
+
+		// デスフラグの立った敵を削除
+		enemys_.remove_if([](Enemy* enemy) {
+			if (enemy->IsDead()) {
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		// 衝突マネージャのリストをクリア
+		collisionManager_->Clear();
+
+		/// 敵発生コマンドの更新
+		UpdateEnemyPopCommands();
+
+		// 自キャラの更新
+		player_->Update(viewProjection_, lockOnMark_);
+
+		// 敵キャラの更新
+		for (Enemy* enemy : enemys_) {
+			enemy->Update(viewProjection_);
+		}
+
+		// ロックオンの更新
+		bool isListAllDead = false;
+		// リストのループ処理
+		for (LockOn* lockOn : lockOnMark_) {
+			if (lockOn->IsDead()) {
+				isListAllDead = true;
+			} else {
+				// ロックオンの更新
+				lockOn->Update(viewProjection_);
+
+				isListAllDead = false;
+			}
+		}
+		if (isListAllDead) {
+			lockOnMark_.clear();
+		}
+
+		// 弾更新
+		for (EnemyBullet* enemyBullet : enemyBullets_) {
+			enemyBullet->Update();
+		}
+
+		// コライダー全てを衝突マネージャのリストに登録する
+		SetCollisionManager();
+
+		// 衝突判定と応答
+		collisionManager_->CheckAllCollisions();
+
+#ifdef _DEBUG
+		if (input_->TriggerKey(DIK_P)) {
+			isDebugCameraActive_ = !isDebugCameraActive_;
+		}
+
+		ImGui::SetNextWindowPos(ImVec2(10, 80), ImGuiCond_Once);   // ウィンドウの座標(プログラム起動時のみ読み込み)
+		ImGui::SetNextWindowSize(ImVec2(300, 80), ImGuiCond_Once); // ウィンドウのサイズ(プログラム起動時のみ読み込み)
+
+		ImGui::Begin("Camera");
+		ImGui::Text("nowLen %.2f", nowLen_);
+		ImGui::End();
+
+#endif // _DEBUG
+
+		// 天球
+		skydome_->Update();
+
+		// レールカメラの更新
+		railCamera_->Update(pointsDrawing.at(t_), MyTools::Subtract(pointsDrawing.at(forwardt_), pointsDrawing.at(t_)));
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		// ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+
+		// カメラの処理
+		if (isDebugCameraActive_) {
+			// デバッグカメラの更新
+			debugCamera_->Update();
+		} else {
+			// ビュープロジェクション行列の更新と転送
+			// viewProjection_.UpdateMatrix();
+		}
+
+		t_++;
+		forwardt_++;
+		if (t_ + 50 > 500) {
+			t_ = 450;
+			forwardt_ = 500;
+		}
+
+		nowLen_ += move_;
+	}
+
+	if (isClear_) {
+		if (joyState.Gamepad.wButtons && XINPUT_GAMEPAD_A) {
+			isClear_ = false;
+			isGame_ = false;
+			isTitle_ = true;
+			isGameOver_ = false;
+
+			time_ = maxTime_;
+		}
+	}
+
+	if (isGameOver_) {
+		if (joyState.Gamepad.wButtons && XINPUT_GAMEPAD_A) {
+			isClear_ = false;
+			isGame_ = false;
+			isTitle_ = true;
+			isGameOver_ = false;
+
+			time_ = maxTime_;
+		}
 	}
 }
 
@@ -368,20 +472,23 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	 
-	// 天球の描画
-	skydome_->Draw(viewProjection_);
+	if (isGame_) {
 
-	// 自キャラの描画
-	player_->Draw(viewProjection_);
+		// 天球の描画
+		skydome_->Draw(viewProjection_);
 
-	// 敵キャラの描画
-	for (Enemy* enemy : enemys_) {
-		enemy->Draw(viewProjection_);
-	}
+		// 自キャラの描画
+		player_->Draw(viewProjection_);
 
-	// 弾描画
-	for (EnemyBullet* enemyBullet : enemyBullets_) {
-		enemyBullet->Draw(viewProjection_);
+		// 敵キャラの描画
+		for (Enemy* enemy : enemys_) {
+			enemy->Draw(viewProjection_);
+		}
+
+		// 弾描画
+		for (EnemyBullet* enemyBullet : enemyBullets_) {
+			enemyBullet->Draw(viewProjection_);
+		}
 	}
 
 	// 3Dオブジェクト描画後処理
@@ -396,15 +503,32 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 
-	// 自キャラの2D描画
-	player_->DrawUI();
-
-	// ロックオンの描画
-	// リストのループ処理
-	for (LockOn* lockOn : lockOnMark_) {
-		// ロックオンの描画
-		lockOn->Draw();
+	if (isTitle_)
+	{
+		spriteTitle_->Draw();
 	}
+
+	if (isGame_) {
+
+		// 自キャラの2D描画
+		player_->DrawUI();
+
+		// ロックオンの描画
+		// リストのループ処理
+		for (LockOn* lockOn : lockOnMark_) {
+			// ロックオンの描画
+			lockOn->Draw();
+		}
+	}
+	
+	if (isClear_) {
+		spriteClear_->Draw();
+	}
+
+	if (isGameOver_) {
+		spriteGameOver_->Draw();
+	}
+
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
