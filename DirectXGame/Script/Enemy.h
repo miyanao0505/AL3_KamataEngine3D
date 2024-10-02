@@ -25,11 +25,11 @@ public:
 	// 毎フレーム処理(純粋仮想関数)
 	virtual void Update() = 0;
 
-	protected:
-		// 状態名
-	    std::string name_;
-		// 操作対象の敵
-	    Enemy* enemy_ = nullptr;
+protected:
+	// 状態名
+    std::string name_;
+	// 操作対象の敵
+    Enemy* enemy_ = nullptr;
 };
 
 /// <summary>

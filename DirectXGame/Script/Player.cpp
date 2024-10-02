@@ -66,9 +66,6 @@ void Player::Update(ViewProjection& viewProjection) {
 	// キャラクターの移動ベクトル
 	Vector3 move = {0, 0, 0};
 
-	// キャラクターの移動速さ
-	const float kCharacterSpeed = 0.2f;
-
 	// ゲームパッド操作
 	// ゲームパッド状態取得
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {

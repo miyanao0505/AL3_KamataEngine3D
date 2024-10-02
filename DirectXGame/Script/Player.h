@@ -7,11 +7,14 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "WinApp.h"
-#include "imgui.h"
 #include "MyTools.h"
 #include "Matrix.h"
 #include "PlayerBullet.h"
 #include "Collider.h"
+#ifdef _DEBUG
+#include "imgui.h"
+#endif // _DEBUG
+
 
 /// <summary>
 /// 自キャラ

@@ -115,8 +115,8 @@ void GameScene::Initialize() {
 	// 軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 
-	t = 0;
-	forwardt = t + 50;
+	t_ = 0;
+	forwardt_ = t_ + 50;
 }
 
 void GameScene::Update() {
@@ -174,7 +174,7 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	// レールカメラの更新
-	railCamera_->Update(pointsDrawing.at(t), MyTools::Subtract(pointsDrawing.at(forwardt), pointsDrawing.at(t)));
+	railCamera_->Update(pointsDrawing.at(t_), MyTools::Subtract(pointsDrawing.at(forwardt_), pointsDrawing.at(t_)));
 	viewProjection_.matView = railCamera_->GetViewProjection().matView;
 	viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 	// ビュープロジェクション行列の転送
@@ -189,12 +189,12 @@ void GameScene::Update() {
 		//viewProjection_.UpdateMatrix();
 	}
 
-	t++;
-	forwardt++;
-	if (t + 50 > 500)
+	t_++;
+	forwardt_++;
+	if (t_ + 50 > 500)
 	{
-		t = 450;
-		forwardt = 500;
+		t_ = 450;
+		forwardt_ = 500;
 	}
 }
 

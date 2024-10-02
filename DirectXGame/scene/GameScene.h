@@ -131,8 +131,8 @@ private: // メンバ変数
 
 	PrimitiveDrawer* primitiveDrawer_ = nullptr;
 
-	int t;
-	int forwardt;
+	int t_;
+	int forwardt_;
 
 	/// <summary>
 	/// ゲームシーン用
